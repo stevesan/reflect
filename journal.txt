@@ -1,0 +1,5 @@
+
+NEXT: 
+
+- rendering lines: juse use some hashes 
+- have "folding" background!

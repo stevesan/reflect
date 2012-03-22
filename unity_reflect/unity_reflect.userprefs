@@ -1,0 +1,16 @@
+﻿<Properties>
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/scripts/Utils/ProGeo.js">
+    <Files>
+      <File FileName="Assets/scripts/Utils/ProGeo.js" Line="205" Column="4" />
+      <File FileName="Assets/scripts/Utils/Utils.js" Line="1" Column="1" />
+    </Files>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore>
+      <Breakpoint file="/Users/stevesan84/reflect/unity_reflect/Assets/scripts/Utils/ProGeo.js" line="194" />
+      <Breakpoint file="/Users/stevesan84/reflect/unity_reflect/Assets/scripts/Utils/ProGeo.js" line="215" />
+    </BreakpointStore>
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+</Properties>
