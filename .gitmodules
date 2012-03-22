@@ -1,0 +1,3 @@
+[submodule "unity_reflect/Assets/scripts/UnityUtils"]
+	path = unity_reflect/Assets/scripts/UnityUtils
+	url = git@github.com:stevesan/UnityUtils.git
