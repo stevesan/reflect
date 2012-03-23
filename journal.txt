@@ -1,5 +1,7 @@
 
 NEXT: 
+- import SVG for initial level geometry
+	see how we can name elements in InkScape
 
-- rendering lines: juse use some hashes 
-- have "folding" background!
+LATER:
+- have "folding" background! if we can get a bg texture that matches the initial geometry, this should make everything render nicely without the need to tesselate polygons and stuff?

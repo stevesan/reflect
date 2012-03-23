@@ -1,10 +1,14 @@
 #pragma strict
 
+import System.IO;
+
 var width = 0.3;
 var currShape = new Mesh2D();
 var hostcam : Camera;
 var lineStart = Vector2(0,0);
 var helpText : GUIText;
+
+var levelGeoCommands:TextAsset;
 
 private var isReflecting = false;
 
@@ -19,16 +23,34 @@ function Start () {
 	ProGeo.BuildBeltMesh( svg.GetPoints(), -1, 1, false, GetComponent(MeshFilter).mesh );
 	*/
 
-	var npts = 6;
-	currShape = new Mesh2D();
-	currShape.pts = [
-		Vector2( 0, 0 ),
-		Vector2( 5, 0 ),
-		Vector2( 5, 5 ),
-		Vector2( 0, 5 ) ];
+	// build from the text file
 
-	currShape.edgeA = [ 0, 1, 2, 3];
-	currShape.edgeB = [ 1, 2, 3, 0];
+	// first read the width/height
+	var reader = new StringReader( levelGeoCommands.text );
+	var line = reader.ReadLine();
+	var parts = line.Split([' '], System.StringSplitOptions.RemoveEmptyEntries);
+	var w = parseFloat(parts[0]);
+	var h = parseFloat(parts[1]);
+	var scale = 20.0/h;
+	var offset = scale*Vector2( -w/2.0, h/2.0 );
+
+	var builder = new SvgPathBuilder();
+	builder.BeginBuilding();
+	builder.ExecuteCommands( reader, h, scale, offset );
+	builder.EndBuilding();
+
+	currShape = new Mesh2D();
+	currShape.pts = builder.GetPoints();
+
+	// TEMP SvgPathBuilder should really have this
+	var npts = currShape.pts.length;
+	currShape.edgeA = new int[ npts ];
+	currShape.edgeB = new int[ npts ];
+	for( var i = 0; i < currShape.pts.length; i++ )
+	{
+		currShape.edgeA[i] = i;
+		currShape.edgeB[(i+1)%npts] = i;
+	}
 
 	//currShape.Reflect( Vector2(0,-5), Vector2(15,10), false );
 

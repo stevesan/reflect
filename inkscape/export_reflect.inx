@@ -1,0 +1,13 @@
+<inkscape-extension>
+  <_name>Export for Reflection</_name>
+  <id>stevenan.export_reflect</id>
+  <dependency type="executable" location="extensions">export_reflect.py</dependency>
+  <dependency type="executable" location="extensions">inkex.py</dependency>
+  <output>
+		<extension>.txt</extension>
+		<mimetype>text</mimetype>
+  </output>
+  <script>
+    <command reldir="extensions" interpreter="python">export_reflect.py</command>
+  </script>
+</inkscape-extension>
