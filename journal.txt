@@ -1,11 +1,15 @@
 
 NEXT: 
+- SERIOUSLY consider grid-snapping (and angles) to keep things less fidgety..
+- disable ability to walk up steep slopes..
+- zoom in more. too much precison required right now
+- need to disallow reflections that put player out of mesh
+- "folding" bg, to better show physical space
+- change goal graphic, so it's clear it doesn't drop/move
+- make line of reflection extend the screen
 - SvgBuilder needs to handle multiple pieces, ie. maintain its own edge list. Just have it contain a Mesh2D..
 - Add # of allowed reflections, as XML parameter in levelArea rects
 - add per-level tutorial text
-
-LATER:
-- have "folding" background! if we can get a bg texture that matches the initial geometry, this should make everything render nicely without the need to tesselate polygons and stuff?
 
 STORY/LYRICS:
 

@@ -11,6 +11,10 @@ var helpText : GUIText;
 var levelsText : TextAsset;
 
 var goalGetSound : AudioClip;
+var restartSnd : AudioClip;
+var startReflectSnd : AudioClip;
+var cancelReflectSnd : AudioClip;
+var confirmReflectSnd : AudioClip;
 
 //----------------------------------------
 //  Game state
@@ -101,6 +105,7 @@ function Update () {
 
 		if( Input.GetButtonDown('Reset') )
 		{
+			AudioSource.PlayClipAtPoint( restartSnd, hostcam.transform.position );
 			SwitchLevel( currLevId );
 		}
 		else if( Input.GetButtonDown('NextLevel') )
@@ -120,6 +125,7 @@ function Update () {
 			// we done?
 			if( Input.GetButtonDown('ReflectToggle') )
 			{
+				AudioSource.PlayClipAtPoint( confirmReflectSnd, hostcam.transform.position );
 				// use new shape
 				currLevGeo = newShape;
 				UpdateCollisionMesh();
@@ -127,6 +133,7 @@ function Update () {
 			}
 			else if( Input.GetButtonDown('Cancel') )
 			{
+				AudioSource.PlayClipAtPoint( cancelReflectSnd, hostcam.transform.position );
 				isReflecting = false;
 			}
 		}
@@ -137,6 +144,7 @@ function Update () {
 			if( Input.GetButtonDown('ReflectToggle') )
 			{
 				// start drag
+				AudioSource.PlayClipAtPoint( startReflectSnd, hostcam.transform.position );
 				lineStart = GetMouseXYWorldPos();
 				isReflecting = true;
 			}

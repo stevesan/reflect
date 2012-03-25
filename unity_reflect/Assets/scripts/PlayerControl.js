@@ -6,6 +6,8 @@
 var eventListeners : GameObject[];
 var isPlayer = true;
 
+var jumpSnd : AudioClip;
+
 //----------------------------------------
 //  Movement control parameters
 //  TODO - refactor some of this stuff, separating sizing from movement controls
@@ -245,6 +247,8 @@ function FixedUpdate()
 		if( Input.GetButton("Jump") && (!jumpPressedPrevFrame||debugHoldJumping)) {
 			if( debugInfiniteJump || isGrounded )
 			{
+				AudioSource.PlayClipAtPoint( jumpSnd, transform.position );
+
 				AddJumpVelocity( jumpRelHeight );
 
 				for( obj in eventListeners )
