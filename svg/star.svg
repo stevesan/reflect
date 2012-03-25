@@ -24,16 +24,16 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="2"
-     inkscape:cx="100.19423"
-     inkscape:cy="108.11428"
+     inkscape:zoom="0.70710678"
+     inkscape:cx="304.06138"
+     inkscape:cy="0.54356238"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
-     inkscape:window-width="600"
-     inkscape:window-height="626"
-     inkscape:window-x="287"
-     inkscape:window-y="111"
+     inkscape:window-width="1276"
+     inkscape:window-height="756"
+     inkscape:window-x="4"
+     inkscape:window-y="0"
      inkscape:window-maximized="0" />
   <metadata
      id="metadata7">
@@ -48,31 +48,139 @@
     </rdf:RDF>
   </metadata>
   <g
-     inkscape:label="Layer 1"
+     inkscape:label="level1"
      inkscape:groupmode="layer"
      id="layer1"
      transform="translate(0,-852.36218)">
-    <path
-       style="fill:none;stroke:#000000;stroke-width:0.29963726px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       d="m 83.331062,889.15486 31.351608,33.66342 50.51092,-0.84159 -29.60985,44.60403 30.48072,52.17828 L 91.168964,980.88768 32.820143,1021.2838 65.913506,964.89755 31.078388,932.9173 61.559115,918.61035 z"
-       id="path3063"
-       inkscape:connector-curvature="0"
-       sodipodi:nodetypes="ccccccccccc" />
     <rect
-       style="fill:#71c42b;fill-opacity:1;stroke:none"
-       id="player"
+       style="fill:none;stroke:#000000;stroke-width:0.64247626;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       id="rect3872-9"
+       width="109.40599"
+       height="109.40599"
+       x="650.01862"
+       y="913.74805"
+       gameObjType="levelArea" />
+    <rect
+       style="fill:#00ff00;fill-opacity:1;stroke:none"
+       id="rect3844-3"
        height="10"
-       x="63"
-       y="-947.86218"
+       x="688.72247"
+       y="978.08368"
        width="10"
-       transform="scale(1,-1)" />
+       gameObjType="player" />
+    <rect
+       width="10"
+       y="951.78473"
+       x="712.80212"
+       height="10"
+       id="rect3846-0"
+       style="fill:#ffff00;fill-opacity:1;stroke:none"
+       gameObjType="goal" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:0.58261061;stroke-miterlimit:4;stroke-opacity:1"
+       d="m 685.72086,948.47548 41.36535,0 0,41.3653 -41.36535,0 z"
+       id="rect3911"
+       gameObjType="levelGeo"
+       inkscape:connector-curvature="0" />
+    <rect
+       gameObjType="levelArea"
+       y="912.04205"
+       x="393.33884"
+       height="109.40599"
+       width="109.40599"
+       id="rect4050"
+       style="fill:none;stroke:#000000;stroke-width:0.64247626;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
+    <rect
+       gameObjType="player"
+       width="10"
+       y="960.97815"
+       x="415.74979"
+       height="10"
+       id="rect4052"
+       style="fill:#00ff00;fill-opacity:1;stroke:none" />
+    <rect
+       gameObjType="goal"
+       style="fill:#ffff00;fill-opacity:1;stroke:none"
+       id="rect4054"
+       height="10"
+       x="467.49738"
+       y="960.07867"
+       width="10" />
+    <path
+       inkscape:connector-curvature="0"
+       gameObjType="levelGeo"
+       id="path4056"
+       d="m 412.0411,956.99725 18.78004,0 0,15.6375 -18.78004,0 z"
+       style="fill:none;stroke:#000000;stroke-width:0.2413649;stroke-miterlimit:4;stroke-opacity:1" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:0.32299915;stroke-miterlimit:4;stroke-opacity:1"
+       d="m 446.93926,956.74725 33.63188,0 0,15.6375 -33.63188,0 z"
+       id="path4058"
+       gameObjType="levelGeo"
+       inkscape:connector-curvature="0" />
+    <rect
+       style="fill:none;stroke:#000000;stroke-width:0.64247626;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       id="rect4087"
+       width="109.40599"
+       height="109.40599"
+       x="266.47382"
+       y="911.54309"
+       gameObjType="levelArea" />
+    <rect
+       style="fill:#00ff00;fill-opacity:1;stroke:none"
+       id="rect4089"
+       height="10"
+       x="288.17767"
+       y="-970.37866"
+       width="10"
+       transform="scale(1,-1)"
+       gameObjType="player" />
     <rect
        transform="scale(1,-1)"
        width="10"
-       y="-941.36218"
-       x="109"
+       y="-970.14038"
+       x="330.85785"
        height="10"
-       id="goal"
-       style="fill:#ffff00;fill-opacity:1;stroke:none" />
+       id="rect4091"
+       style="fill:#ffff00;fill-opacity:1;stroke:none"
+       gameObjType="goal" />
+    <path
+       inkscape:connector-curvature="0"
+       gameObjType="levelGeo"
+       id="path4095"
+       d="m 285.07246,957.30896 33.63188,0 0,15.6375 -33.63188,0 z"
+       style="fill:none;stroke:#000000;stroke-width:0.32299915;stroke-miterlimit:4;stroke-opacity:1" />
+    <rect
+       gameObjType="levelArea"
+       y="912.95728"
+       x="516.78961"
+       height="109.40599"
+       width="109.40599"
+       id="rect4097"
+       style="fill:none;stroke:#000000;stroke-width:0.64247626;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
+    <rect
+       gameObjType="player"
+       transform="scale(1,-1)"
+       width="10"
+       y="-955.52942"
+       x="542.73615"
+       height="10"
+       id="rect4099"
+       style="fill:#00ff00;fill-opacity:1;stroke:none" />
+    <rect
+       gameObjType="goal"
+       style="fill:#ffff00;fill-opacity:1;stroke:none"
+       id="rect4101"
+       height="10"
+       x="586.12341"
+       y="-990.64648"
+       width="10"
+       transform="scale(1,-1)" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:0.43344158;stroke-miterlimit:4;stroke-opacity:1"
+       d="m 539.63089,942.45966 60.5633,0 0,15.6375 -60.5633,0 z"
+       id="path4103"
+       gameObjType="levelGeo"
+       inkscape:connector-curvature="0" />
   </g>
 </svg>

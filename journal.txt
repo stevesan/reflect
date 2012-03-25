@@ -1,7 +1,29 @@
 
 NEXT: 
-- import SVG for initial level geometry
-	see how we can name elements in InkScape
+- recenter/rescale SVG
+- player/goal positions (wtf is up with the Y coord??)
+		just use color to differentiate? heh
+- book keeping code for levels
+		why not actually just keep all levels in a single SVG? they're all simple anyway..use different IDs and groupings
 
 LATER:
 - have "folding" background! if we can get a bg texture that matches the initial geometry, this should make everything render nicely without the need to tesselate polygons and stuff?
+
+STORY/LYRICS:
+
+Life is simple when my goals are clear (star)
+Even when they seem impossible (star)
+But sometimes, things become uncertain (? block)
+And I need to do some self-reflection (mirror)
+Should I seek money? (coin)
+Should I seek love? (heart)
+Should I seek status? (ribbon)
+Should I seek approval? (thumbs up)
+Or just be myself? (self)
+But am I who I want to be? (white self)
+Can I improve myself? (taller self)
+Or should I just accept my faults? (self)
+What is worth suffering for? (crown of thorns)
+What is worth years of my life? (sand timer)
+When should I just give up? (surrender flag)
+Am I thinking too much? (brain)
