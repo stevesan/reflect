@@ -61,6 +61,11 @@ function GetWalkingValue() {
 	return walkingValue;
 }
 
+function Reset()
+{
+	rigidbody.velocity = Vector3(0,0,0);
+}
+
 function Start () {
 	rigidbody.useGravity = false;
 }
@@ -139,8 +144,6 @@ function IsGroundedSweepTest()
 
 
 function Update () {
-	if( Input.GetButtonDown('Reset') )
-		Application.LoadLevel( Application.loadedLevel );
 }
 
 function FixedUpdate()

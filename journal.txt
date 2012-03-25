@@ -1,10 +1,8 @@
 
 NEXT: 
-- recenter/rescale SVG
-- player/goal positions (wtf is up with the Y coord??)
-		just use color to differentiate? heh
-- book keeping code for levels
-		why not actually just keep all levels in a single SVG? they're all simple anyway..use different IDs and groupings
+- SvgBuilder needs to handle multiple pieces, ie. maintain its own edge list. Just have it contain a Mesh2D..
+- Add # of allowed reflections, as XML parameter in levelArea rects
+- add per-level tutorial text
 
 LATER:
 - have "folding" background! if we can get a bg texture that matches the initial geometry, this should make everything render nicely without the need to tesselate polygons and stuff?
