@@ -10,6 +10,7 @@ class LevelInfo
 	var geo = new Mesh2D();
 	var playerPos:Vector2;
 	var goalPos:Vector2;
+	var keys = new List.<Vector2>();
 }
 
 static function ParseRect( parts:String[] ) : Rect
@@ -40,6 +41,7 @@ static function ParseLevels( reader:StringReader ) : List.<LevelInfo>
 	var areas = new List.<Rect>();
 	var players = new List.<Rect>();
 	var goals = new List.<Vector2>();
+	var keys = new List.<Vector2>();
 	var geos = new List.<Mesh2D>();
 
 	var line = reader.ReadLine();
@@ -52,6 +54,8 @@ static function ParseLevels( reader:StringReader ) : List.<LevelInfo>
 			players.Add( ParseRect( parts ) );
 		else if( parts[0] == 'goal' )
 			goals.Add( ParseRectCenter( parts ) );
+		else if( parts[0] == 'key' )
+			keys.Add( ParseRectCenter( parts ) );
 		else if( parts[0] == 'levelGeo' )
 		{
 			var numCmds = parseInt( parts[1] );
@@ -76,7 +80,7 @@ static function ParseLevels( reader:StringReader ) : List.<LevelInfo>
 		}
 		else
 		{
-			Debug.LogError('bad line: '+line);
+			Debug.LogError('Unknown game obj type in line = "'+line+'"');
 		}
 		line = reader.ReadLine();
 	}
@@ -119,6 +123,13 @@ static function ParseLevels( reader:StringReader ) : List.<LevelInfo>
 		if( !found )
 			Debug.LogError('no goal found for level '+infos.Count);
 
+		// 0 or many keys allowed
+		for( key in keys )
+		{
+			if( area.Contains( key ) )
+				info.keys.Add( key );
+		}
+
 		found = false;
 		for( geo in geos )
 		{
@@ -138,6 +149,8 @@ static function ParseLevels( reader:StringReader ) : List.<LevelInfo>
 		info.playerPos /= playerWidth;
 		info.goalPos /= playerWidth;
 		info.geo.ScalePoints( 1.0/playerWidth );
+		for( i = 0; i < info.keys.Count; i++ )
+			info.keys[i] /= playerWidth;
 
 		infos.Add(info);
 

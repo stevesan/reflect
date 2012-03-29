@@ -35,9 +35,6 @@ private var groundTestRelDist = 0.05;
 private var maxWalkRelAccel = 100.0;
 private var maxInAirRelAccel = 100.0;
 
-// For ground-detection. How much of a slope the player can walk/jump from
-private var minNormalY = 0.7;
-
 //----------------------------------------
 //  Debugging
 //----------------------------------------
@@ -133,11 +130,13 @@ function IsGroundedSweepTest()
 	var hit : RaycastHit;
 	if( rb.SweepTest( rb.transform.up*-1, hit, groundTestRelDist*GetEdgeLength() ) )
 	{
+		var rv = hit.normal.y > GetComponent(IsGrounded).minNormalY;
 		if( debugGroundTest )
 		{
-			Debug.DrawRay( rb.transform.position, rb.transform.up*-1, Color.red );
+			Debug.DrawRay( hit.point, hit.normal, Color.red );
+			Debug.Log('t = '+Time.time+' rv = '+rv+ ' pt = '+hit.point+' normal = ' +hit.normal);
 		}
-		return hit.normal.y > minNormalY;
+		return rv;
 	}
 	else
 		// nothing below us close enough..for our feet to touch!
@@ -247,7 +246,7 @@ function FixedUpdate()
 		if( Input.GetButton("Jump") && (!jumpPressedPrevFrame||debugHoldJumping)) {
 			if( debugInfiniteJump || isGrounded )
 			{
-				AudioSource.PlayClipAtPoint( jumpSnd, transform.position );
+				if( jumpSnd != null ) AudioSource.PlayClipAtPoint( jumpSnd, transform.position );
 
 				AddJumpVelocity( jumpRelHeight );
 

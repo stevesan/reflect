@@ -5,16 +5,30 @@ import System.IO;
 static var Singleton : GameController = null;
 
 var hostcam : Camera;
+
+//----------------------------------------
+//  Prefabs/Puppet-objects
+//----------------------------------------
+var helpText : GUIText;
 var player : GameObject;
 var goal : GameObject;
-var helpText : GUIText;
+var keyPrefab : GameObject;
+
+//----------------------------------------
+//  Assets
+//----------------------------------------
 var levelsText : TextAsset;
 
+//----------------------------------------
+//  Sounds
+//----------------------------------------
 var goalGetSound : AudioClip;
 var restartSnd : AudioClip;
 var startReflectSnd : AudioClip;
 var cancelReflectSnd : AudioClip;
 var confirmReflectSnd : AudioClip;
+var keyGetSound : AudioClip;
+var goalLockedSound: AudioClip;
 
 //----------------------------------------
 //  Game state
@@ -28,13 +42,36 @@ private var currLevGeo : Mesh2D = null;
 //----------------------------------------
 private var isReflecting = false;
 private var lineStart = Vector2(0,0);
+private var numKeysGot = 0;
+private var keyObjs = new Array();
 
 function GetLevel() : LevelInfo { return levels[currLevId]; }
 
 function OnGetGoal()
 {
-	AudioSource.PlayClipAtPoint( goalGetSound, hostcam.transform.position );
-	SwitchLevel( (currLevId+1) % levels.Count );
+	if( numKeysGot == keyObjs.length )
+	{
+		AudioSource.PlayClipAtPoint( goalGetSound, hostcam.transform.position );
+		SwitchLevel( (currLevId+1) % levels.Count );
+	}
+	else
+	{
+		AudioSource.PlayClipAtPoint( goalLockedSound, hostcam.transform.position );
+	}
+}
+
+function UpdateGoalLocked()
+{
+	goal.GetComponent(Star).SetLocked( numKeysGot < keyObjs.length );
+}
+
+function OnGetKey( keyObj:GameObject )
+{
+	numKeysGot++;
+	Debug.Log('got '+numKeysGot+' keys');
+	AudioSource.PlayClipAtPoint( keyGetSound, hostcam.transform.position );
+	Destroy(keyObj);
+	UpdateGoalLocked();
 }
 
 function SwitchLevel( id:int )
@@ -49,6 +86,28 @@ function SwitchLevel( id:int )
 	player.transform.position = levels[id].playerPos;
 	player.GetComponent(PlayerControl).Reset();
 	goal.transform.position = levels[id].goalPos;
+
+	Debug.Log('spawned player at '+player.transform.position);
+
+	//----------------------------------------
+	//  Spawn keys
+	//----------------------------------------
+	numKeysGot = 0;
+	for( key in keyObjs )
+		Destroy(key);
+	keyObjs.Clear();
+	// always disable the prefab
+	keyPrefab.active = false;
+	for( keyPos in levels[id].keys )
+	{
+		var obj = Instantiate( keyPrefab, keyPos, keyPrefab.transform.rotation );
+		obj.transform.parent = this.transform;
+		obj.active = true;
+		keyObjs.Push( obj );
+		Debug.Log('spawned key at '+keyPos);
+	}
+
+	UpdateGoalLocked();
 }
 
 function Awake () {
@@ -108,9 +167,11 @@ function Update () {
 			AudioSource.PlayClipAtPoint( restartSnd, hostcam.transform.position );
 			SwitchLevel( currLevId );
 		}
-		else if( Input.GetButtonDown('NextLevel') )
-		{
+		else if( Input.GetButtonDown('NextLevel') ) {
 			SwitchLevel( (currLevId+1)%levels.Count );
+		}
+		else if( Input.GetButtonDown('PrevLevel') ) {
+			SwitchLevel( (levels.Count+currLevId-1)%levels.Count );
 		}
 		else if( isReflecting )
 		{

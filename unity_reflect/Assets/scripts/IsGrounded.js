@@ -1,5 +1,6 @@
 
-var minNormalY = 0.7;
+var minNormalY = 0.9;
+var debug = false;
 
 private var isGrounded = false;
 
@@ -17,11 +18,16 @@ function OnCollisionStay( col : Collision ) : void
 
 	for( var c : ContactPoint in col.contacts )
 	{
-
 		// see if we hit anything below us?
 		// The normal is inward-facing, but relative to THIS RB.
 		if( c.normal.y > minNormalY )
 		{
+			if( debug )
+			{
+				Debug.DrawRay( c.point, c.normal, Color.green );
+				Debug.Log('n = '+c.normal);
+			}
+
 			isGrounded = true;
 			break;
 		}
