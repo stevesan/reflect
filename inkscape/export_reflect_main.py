@@ -41,7 +41,10 @@ class ExportReflectOutput(inkex.Effect):
 				mat = parseTransform( elt.get('transform') )
 				if mat != None:
 					applyTransformToPoint( mat, pos )
-				print '%s %f %f %s %s' % (elt.get('gameObjType'), pos[0], pos[1], elt.get('width'), elt.get('height'))
+				if elt.get('gameObjType') == 'levelArea':
+					print '%s %f %f %s %s %s' % (elt.get('gameObjType'), pos[0], pos[1], elt.get('width'), elt.get('height'), elt.get('maxReflections'))
+				else:
+					print '%s %f %f %s %s' % (elt.get('gameObjType'), pos[0], pos[1], elt.get('width'), elt.get('height'))
 
 		for elt in svg.iter():
 			if elt.tag.endswith('path') and elt.get('gameObjType') == 'levelGeo':

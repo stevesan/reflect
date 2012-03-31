@@ -11,6 +11,8 @@ class LevelInfo
 	var playerPos:Vector2;
 	var goalPos:Vector2;
 	var keys = new List.<Vector2>();
+	var areaCenter:Vector2;
+	var maxReflections:int = 2;
 }
 
 static function ParseRect( parts:String[] ) : Rect
@@ -39,6 +41,7 @@ static function ParseLevels( reader:StringReader ) : List.<LevelInfo>
 	//  Parse all the areas and objects
 	//----------------------------------------
 	var areas = new List.<Rect>();
+	var maxReflections = new Array();
 	var players = new List.<Rect>();
 	var goals = new List.<Vector2>();
 	var keys = new List.<Vector2>();
@@ -49,7 +52,10 @@ static function ParseLevels( reader:StringReader ) : List.<LevelInfo>
 	{
 		var parts = line.Split([' '], System.StringSplitOptions.RemoveEmptyEntries);
 		if( parts[0] == 'levelArea')
+		{
 			areas.Add( ParseRect( parts ) );
+			maxReflections.Push( parseInt( parts[5] ) );
+		}
 		else if( parts[0] == 'player' )
 			players.Add( ParseRect( parts ) );
 		else if( parts[0] == 'goal' )
@@ -89,12 +95,15 @@ static function ParseLevels( reader:StringReader ) : List.<LevelInfo>
 	//  Now build the levels by figuring out which objects are in which areas
 	//----------------------------------------
 	var infos = new List.<LevelInfo>( areas.Count );
-	i = 0;
 
-	for( area in areas )
+	for( var iLev = 0; iLev < areas.Count; iLev++ )
 	{
+		var area = areas[ iLev ];
 		var found = false;
 		var info = new LevelInfo();
+		info.areaCenter = area.center;
+		info.maxReflections = maxReflections[iLev];
+
 		var playerWidth = 1.0;
 		// find the first player that's in the area
 		for( player in players )
@@ -148,6 +157,7 @@ static function ParseLevels( reader:StringReader ) : List.<LevelInfo>
 		//----------------------------------------
 		info.playerPos /= playerWidth;
 		info.goalPos /= playerWidth;
+		info.areaCenter /= playerWidth;
 		info.geo.ScalePoints( 1.0/playerWidth );
 		for( i = 0; i < info.keys.Count; i++ )
 			info.keys[i] /= playerWidth;

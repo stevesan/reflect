@@ -13,6 +13,7 @@ var helpText : GUIText;
 var player : GameObject;
 var goal : GameObject;
 var keyPrefab : GameObject;
+var background : GameObject;
 
 //----------------------------------------
 //  Assets
@@ -29,6 +30,7 @@ var cancelReflectSnd : AudioClip;
 var confirmReflectSnd : AudioClip;
 var keyGetSound : AudioClip;
 var goalLockedSound: AudioClip;
+var maxedReflectionsSnd: AudioClip;
 
 //----------------------------------------
 //  Game state
@@ -41,6 +43,7 @@ private var currLevGeo : Mesh2D = null;
 //  Reflection UI state
 //----------------------------------------
 private var isReflecting = false;
+private var numReflections = 0;
 private var lineStart = Vector2(0,0);
 private var numKeysGot = 0;
 private var keyObjs = new Array();
@@ -78,6 +81,7 @@ function SwitchLevel( id:int )
 {
 	// we'll be changing the geo, obviously, so make a copy
 	isReflecting = false;
+	numReflections = 0;
 	currLevId = id;
 
 	currLevGeo = levels[id].geo.Duplicate();
@@ -86,6 +90,13 @@ function SwitchLevel( id:int )
 	player.transform.position = levels[id].playerPos;
 	player.GetComponent(PlayerControl).Reset();
 	goal.transform.position = levels[id].goalPos;
+
+	// move the background to the area's center
+	background.transform.position = levels[id].areaCenter;
+	background.transform.position.z = 10;
+
+	hostcam.transform.position.x = levels[id].areaCenter.x;
+	hostcam.transform.position.y = levels[id].areaCenter.y;
 
 	Debug.Log('spawned player at '+player.transform.position);
 
@@ -191,6 +202,7 @@ function Update () {
 				currLevGeo = newShape;
 				UpdateCollisionMesh();
 				isReflecting = false;
+				numReflections++;
 			}
 			else if( Input.GetButtonDown('Cancel') )
 			{
@@ -200,21 +212,29 @@ function Update () {
 		}
 		else
 		{
-			helpText.text = 'Left Click';
+			helpText.text = numReflections + ' / ' + GetLevel().maxReflections;
 
 			if( Input.GetButtonDown('ReflectToggle') )
 			{
-				// start drag
-				AudioSource.PlayClipAtPoint( startReflectSnd, hostcam.transform.position );
-				lineStart = GetMouseXYWorldPos();
-				isReflecting = true;
+				if( numReflections >= GetLevel().maxReflections )
+				{
+					// no more allowed
+					AudioSource.PlayClipAtPoint( maxedReflectionsSnd, hostcam.transform.position );
+				}
+				else
+				{
+					// start drag
+					AudioSource.PlayClipAtPoint( startReflectSnd, hostcam.transform.position );
+					lineStart = GetMouseXYWorldPos();
+					isReflecting = true;
+				}
 			}
 		}
 
 	}
 
 	// TEMP
-	hostcam.transform.position.x = player.transform.position.x;
-	hostcam.transform.position.y = player.transform.position.y;
+	//hostcam.transform.position.x = player.transform.position.x;
+	//hostcam.transform.position.y = player.transform.position.y;
 
 }
