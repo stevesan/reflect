@@ -145,8 +145,8 @@ static function ParseLevels( reader:StringReader ) : List.<LevelInfo>
 			if( area.Contains( geo.pts[0] ) )
 			{
 				found = true;
-				info.geo = geo;
-				break;
+				info.geo.Append( geo );
+				// don't break, as we can have many geos
 			}
 		}
 		if( !found )

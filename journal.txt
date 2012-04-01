@@ -1,15 +1,19 @@
 
-NEXT: 
+PLAYTEST: 
 - slope issues - just use CharacterController - GIVE UP EGO!
-- actually draw lines..without debug draw - can we use the exported PNG from InkScape? just fill all level geo..maybe just use it as a mask into a texture..
-- SvgBuilder needs to handle multiple pieces, ie. maintain its own edge list. Just have it contain a Mesh2D..
+- use Inkscape exported PNG to draw and reflect level geo
 - make line of reflection extend the whole screen
-- add per-level tutorial text
+- add per-level tutorial/story text
 
 - SERIOUSLY consider grid-snapping (and angles) to keep things less fidgety..
 	- although the grid bg helps already
-- "folding" bg, to better show physical space
 - disallow reflections that put player out of mesh
+
+PRODUCTION:
+- add UV scrolling bg animation..
+
+PRODUCTIVITY:
+- 
 
 STORY/LYRICS:
 
