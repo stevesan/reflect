@@ -95,10 +95,10 @@ function SwitchLevel( id:int )
 	background.transform.position = levels[id].areaCenter;
 	background.transform.position.z = 10;
 
-	hostcam.transform.position.x = levels[id].areaCenter.x;
-	hostcam.transform.position.y = levels[id].areaCenter.y;
+	hostcam.transform.position = Utils.ToVector3( levels[id].areaCenter, hostcam.transform.position.z );
 
 	Debug.Log('spawned player at '+player.transform.position);
+	Debug.Log('level area center at '+levels[id].areaCenter);
 
 	//----------------------------------------
 	//  Spawn keys

@@ -1,7 +1,8 @@
 
 PLAYTEST: 
-- slope issues - just use CharacterController - GIVE UP EGO!
 - use Inkscape exported PNG to draw and reflect level geo
+	- probably should use python to cut up individual pieces, to keep texture sizes small.
+- slope issues - just use CharacterController - GIVE UP EGO!
 - make line of reflection extend the whole screen
 - add per-level tutorial/story text
 
