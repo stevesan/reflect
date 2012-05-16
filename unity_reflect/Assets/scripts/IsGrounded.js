@@ -24,7 +24,7 @@ function OnCollisionStay( col : Collision ) : void
 		{
 			if( debug )
 			{
-				Debug.DrawRay( c.point, c.normal, Color.green );
+				Debug.DrawRay( c.point, c.normal, Color.blue );
 				Debug.Log('n = '+c.normal);
 			}
 
