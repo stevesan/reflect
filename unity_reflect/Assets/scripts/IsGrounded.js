@@ -4,6 +4,9 @@ var debug = false;
 
 private var isGrounded = false;
 
+// TODO: this function should keep a hashmap of ground objects
+// TODO - why do we need this "poll once only" requirement again?
+
 function FixedUpdate() : void
 {
 	// Make sure we never sleep so we don't stop getting Stay messages
@@ -25,7 +28,7 @@ function OnCollisionStay( col : Collision ) : void
 			if( debug )
 			{
 				Debug.DrawRay( c.point, c.normal, Color.green );
-				Debug.Log('n = '+c.normal);
+				Debug.Log('IsGrounded TRUE n = '+c.normal);
 			}
 
 			isGrounded = true;

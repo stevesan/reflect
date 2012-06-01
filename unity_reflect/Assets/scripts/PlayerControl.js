@@ -123,7 +123,7 @@ function DoPerFrameIsGroundedQuery() {
 	return GetComponent(IsGrounded).QueryGroundedPerFrame();
 }
 
-function IsGroundedSweepTest()
+function IsGroundedSweepTest() : boolean
 {
 	var rb = rigidbody;
 
@@ -133,8 +133,13 @@ function IsGroundedSweepTest()
 		var rv = hit.normal.y > GetComponent(IsGrounded).minNormalY;
 		if( debugGroundTest )
 		{
-			Debug.DrawRay( hit.point, hit.normal, Color.red );
-			Debug.Log('t = '+Time.time+' rv = '+rv+ ' pt = '+hit.point+' normal = ' +hit.normal);
+			if( rv ) {
+				Debug.DrawRay( hit.point, hit.normal, Color.red, 0.0 );
+				Debug.Log('IsGroundedSweepTest TRUE pt = '+hit.point+' normal = ' +hit.normal);
+			}
+			else {
+				Debug.DrawRay( hit.point, hit.normal, Color.green, 0.0 );
+			}
 		}
 		return rv;
 	}

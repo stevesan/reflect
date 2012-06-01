@@ -1,22 +1,26 @@
 
 PLAYTEST: 
-- use Inkscape exported PNG to draw and reflect level geo
-	- probably should use python to cut up individual pieces, to keep texture sizes small.
-- slope issues - just use CharacterController - GIVE UP EGO!
+- triangulation!
+- fix character walking up slope problem
+	ok actually just caused by in-air acceleration
+	potential solution: Only allow in-air accel if there is vertical speed? hmm
+	or just check for left/right walls and disallow acceleration into walls of a certain normal? 
 - make line of reflection extend the whole screen
+
 - add per-level tutorial/story text
 
 - SERIOUSLY consider grid-snapping (and angles) to keep things less fidgety..
 	- although the grid bg helps already
-- disallow reflections that put player out of mesh
 
-PRODUCTION:
-- add UV scrolling bg animation..
+ART:
+- make "ghost trail" effect for main character
 
-PRODUCTIVITY:
-- 
+TOOLS:
 
 STORY/LYRICS:
+
+----------------------------------------
+Idea 1: "Philosophical"
 
 Life is simple when my goals are clear (star)
 Even when they seem impossible (star)
@@ -34,3 +38,18 @@ What is worth suffering for? (crown of thorns)
 What is worth years of my life? (sand timer)
 When should I just give up? (surrender flag)
 Am I thinking too much? (brain)
+
+----------------------------------------
+Idea 2: "Nightmare"
+largely mimicking the Mulholland Dr. diner scene
+
+So, I have this recurring dream...
+I'm always in a box of some sort
+And, for some reason, I'm always trying to get this stone
+It starts out pretty simple at first
+Then I realize that I can change things
+It's hard to describe, but I'm able to alter my situation
+It's pretty exhilirating. I feel powerful. In control.
+And I'm able to keep chasing the rocks
+Sometimes things get tricky, but I find a way
+Random things appear here and there. Like most dreams.

@@ -14,7 +14,7 @@ function Start () {
 	*/
 
 	var npts = 6;
-	var mesh = new Mesh2D();
+	var mesh = new Polygon2D();
 	mesh.pts = [
 		Vector2( 0, 0 ),
 		Vector2( 1, 0 ),

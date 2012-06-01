@@ -7,7 +7,7 @@ import System.Collections.Generic;
 //----------------------------------------
 class LevelInfo
 {
-	var geo = new Mesh2D();
+	var geo = new Polygon2D();
 	var playerPos:Vector2;
 	var goalPos:Vector2;
 	var keys = new List.<Vector2>();
@@ -45,7 +45,7 @@ static function ParseLevels( reader:StringReader ) : List.<LevelInfo>
 	var players = new List.<Rect>();
 	var goals = new List.<Vector2>();
 	var keys = new List.<Vector2>();
-	var geos = new List.<Mesh2D>();
+	var geos = new List.<Polygon2D>();
 
 	var line = reader.ReadLine();
 	while( line != null )
@@ -71,7 +71,7 @@ static function ParseLevels( reader:StringReader ) : List.<LevelInfo>
 			builder.ExecuteCommands( reader, 0.0, 1.0, Vector2(0,0), numCmds );
 			builder.EndBuilding();
 
-			var geo = new Mesh2D();
+			var geo = new Polygon2D();
 			geo.pts = builder.GetPoints();
 			// TEMP SvgPathBuilder should really have this
 			var npts = geo.pts.length;

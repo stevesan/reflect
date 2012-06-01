@@ -37,7 +37,7 @@ var maxedReflectionsSnd: AudioClip;
 //----------------------------------------
 private var levels : List.<LevelInfo> = null;
 private var currLevId : int = 0;
-private var currLevGeo : Mesh2D = null;
+private var currLevGeo : Polygon2D = null;
 
 //----------------------------------------
 //  Reflection UI state
