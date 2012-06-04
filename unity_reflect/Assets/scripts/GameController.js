@@ -15,6 +15,9 @@ var goal : GameObject;
 var keyPrefab : GameObject;
 var background : GameObject;
 
+// the current collision geometry polygon will be triangulated into this object
+var trisHost : MeshFilter;
+
 //----------------------------------------
 //  Assets
 //----------------------------------------
@@ -172,6 +175,10 @@ function Update () {
 	if( currLevGeo != null )
 	{
 		currLevGeo.DebugDraw( Color.green, 0.0 );
+		if( trisHost != null ) {
+			ProGeo.TriangulateSimplePolygon( currLevGeo, trisHost.mesh, true );
+			trisHost.mesh.RecalculateNormals();
+		}
 
 		if( Input.GetButtonDown('Reset') )
 		{
@@ -193,6 +200,12 @@ function Update () {
 			newShape.Reflect( lineStart, lineEnd, false );
 			newShape.DebugDraw( Color.yellow, 0.0 );
 			Debug.DrawLine( lineStart, lineEnd, Color.red, 0.0 );
+
+			// draw the triangulated mesh
+			if( trisHost != null ) {
+				ProGeo.TriangulateSimplePolygon( newShape, trisHost.mesh, true );
+				trisHost.mesh.RecalculateNormals();
+			}
 
 			// we done?
 			if( Input.GetButtonDown('ReflectToggle') )
