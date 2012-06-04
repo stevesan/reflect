@@ -174,11 +174,11 @@ function Update () {
 
 	if( currLevGeo != null )
 	{
-		currLevGeo.DebugDraw( Color.green, 0.0 );
 		if( trisHost != null ) {
 			ProGeo.TriangulateSimplePolygon( currLevGeo, trisHost.mesh, true );
 			trisHost.mesh.RecalculateNormals();
 		}
+		currLevGeo.DebugDraw( Color.blue, 0.0 );
 
 		if( Input.GetButtonDown('Reset') )
 		{
