@@ -90,6 +90,12 @@ function SwitchLevel( id:int )
 	currLevGeo = levels[id].geo.Duplicate();
 	UpdateCollisionMesh();
 
+	// draw the triangulated mesh
+	if( trisHost != null ) {
+		ProGeo.TriangulateSimplePolygon( currLevGeo, trisHost.mesh, false );
+		trisHost.mesh.RecalculateNormals();
+	}
+
 	player.transform.position = levels[id].playerPos;
 	player.GetComponent(PlayerControl).Reset();
 	goal.transform.position = levels[id].goalPos;
@@ -174,11 +180,7 @@ function Update () {
 
 	if( currLevGeo != null )
 	{
-		if( trisHost != null ) {
-			ProGeo.TriangulateSimplePolygon( currLevGeo, trisHost.mesh, true );
-			trisHost.mesh.RecalculateNormals();
-		}
-		currLevGeo.DebugDraw( Color.blue, 0.0 );
+		//currLevGeo.DebugDraw( Color.blue, 0.0 );
 
 		if( Input.GetButtonDown('Reset') )
 		{
@@ -198,12 +200,12 @@ function Update () {
 			var newShape = currLevGeo.Duplicate();
 			var lineEnd = GetMouseXYWorldPos();
 			newShape.Reflect( lineStart, lineEnd, false );
-			newShape.DebugDraw( Color.yellow, 0.0 );
-			Debug.DrawLine( lineStart, lineEnd, Color.red, 0.0 );
+			Debug.Log('shape has '+newShape.GetNumVertices()+' verts, ' + newShape.GetNumEdges()+ ' edges');
+			//newShape.DebugDraw( Color.yellow, 0.0 );
+			//Debug.DrawLine( lineStart, lineEnd, Color.red, 0.0 );
 
-			// draw the triangulated mesh
 			if( trisHost != null ) {
-				ProGeo.TriangulateSimplePolygon( newShape, trisHost.mesh, true );
+				ProGeo.TriangulateSimplePolygon( newShape, trisHost.mesh, false );
 				trisHost.mesh.RecalculateNormals();
 			}
 
@@ -216,6 +218,12 @@ function Update () {
 				UpdateCollisionMesh();
 				isReflecting = false;
 				numReflections++;
+
+				// draw the triangulated mesh
+				if( trisHost != null ) {
+					ProGeo.TriangulateSimplePolygon( newShape, trisHost.mesh, false );
+					trisHost.mesh.RecalculateNormals();
+				}
 			}
 			else if( Input.GetButtonDown('Cancel') )
 			{

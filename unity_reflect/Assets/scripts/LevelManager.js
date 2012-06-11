@@ -72,12 +72,19 @@ static function ParseLevels( reader:StringReader ) : List.<LevelInfo>
 			builder.EndBuilding();
 
 			var geo = new Polygon2D();
-			geo.pts = builder.GetPoints();
-			// TEMP SvgPathBuilder should really have this
+
+			// we can assume that all level paths are closed polygons
+			// so get all but the last point
+			geo.pts = new Vector2[ builder.GetPoints().Count - 1 ];
+			for( var i = 0; i < geo.pts.length; i++ ) {
+				geo.pts[i] = builder.GetPoints()[i];
+			}
 			var npts = geo.pts.length;
 			geo.edgeA = new int[ npts ];
 			geo.edgeB = new int[ npts ];
-			for( var i = 0; i < geo.pts.length; i++ )
+
+			// we actually build our edges in CCW direction
+			for( i = 0; i < geo.pts.length; i++ )
 			{
 				geo.edgeA[i] = i;
 				geo.edgeB[(i+1)%npts] = i;
