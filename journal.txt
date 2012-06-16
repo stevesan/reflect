@@ -5,41 +5,14 @@ almost there, but our monotone decomp isn't correct.
 Need to implement this:
 http://research.engineering.wustl.edu/~pless/546/lectures/l7.html
 http://groups.csail.mit.edu/graphics/classes/6.838/F01/lectures/PolygonTriangulation/monotone2.html
-clearer, although for vertical sweep: http://groups.csail.mit.edu/graphics/classes/6.838/F01/lectures/PolygonTriangulation/monotone1.html
-
-keep a list of edges with associated "helper" verts.
-edges sorted in vertical order, linked list?
-	LinkedList.AddAfter( Node, Node )
-need to look up edges quickly, and also find the lowest edge over a given vertex
-
-TODO: think about when edge is vertical...i think if we just use the defs from here we'll be OK:
-http://groups.csail.mit.edu/graphics/classes/6.838/F01/lectures/PolygonTriangulation/monotone2.html
-reg, start, end, merge, split
-
-when you might insert a verticle edge:
-reg - P,C,N, edge CN may be upwards. but this is OK, since vert N will be the next event, and it'll eventually end at some non-vert line. we can actually just not add it!
-start - 
-end
-merge
-split
-actually, yes, any time you have an upward edge, its end will be the next event, removing it.
-downward edge?
-reg - not possible
-start - not possible
-end - doesn't insert edges
-merge - doesn't add
-split - not possible
-So, conclusion is: if we detect an upward one, just ignore it! downwards will never get inserted
-}
+OK review the algorithms again and make sure we're handling the merge cases correctly..
 
 - fix character walking up slope problem
 	ok actually just caused by in-air acceleration
 	potential solution: Only allow in-air accel if there is vertical speed? hmm
-	or just check for left/right walls and disallow acceleration into walls of a certain normal? 
+	--> or just check for left/right walls and disallow in-air acceleration into walls of a certain normal? 
 - make line of reflection extend the whole screen
-
 - add per-level tutorial/story text
-
 - SERIOUSLY consider grid-snapping (and angles) to keep things less fidgety..
 	- although the grid bg helps already
 

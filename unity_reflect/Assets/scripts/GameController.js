@@ -17,6 +17,7 @@ var background : GameObject;
 
 // the current collision geometry polygon will be triangulated into this object
 var trisHost : MeshFilter;
+var debugHost:DebugTriangulate = null;
 
 //----------------------------------------
 //  Assets
@@ -34,6 +35,11 @@ var confirmReflectSnd : AudioClip;
 var keyGetSound : AudioClip;
 var goalLockedSound: AudioClip;
 var maxedReflectionsSnd: AudioClip;
+
+//----------------------------------------
+//  Debug
+//----------------------------------------
+var debugUnlimited = false;
 
 //----------------------------------------
 //  Game state
@@ -200,13 +206,18 @@ function Update () {
 			var newShape = currLevGeo.Duplicate();
 			var lineEnd = GetMouseXYWorldPos();
 			newShape.Reflect( lineStart, lineEnd, false );
-			Debug.Log('shape has '+newShape.GetNumVertices()+' verts, ' + newShape.GetNumEdges()+ ' edges');
+			//Debug.Log('shape has '+newShape.GetNumVertices()+' verts, ' + newShape.GetNumEdges()+ ' edges');
 			//newShape.DebugDraw( Color.yellow, 0.0 );
 			//Debug.DrawLine( lineStart, lineEnd, Color.red, 0.0 );
 
 			if( trisHost != null ) {
 				ProGeo.TriangulateSimplePolygon( newShape, trisHost.mesh, false );
 				trisHost.mesh.RecalculateNormals();
+
+				// debug output all verts..
+				if( Input.GetButtonDown('DebugReset') && debugHost != null ) {
+					debugHost.Reset( newShape, false );
+				}
 			}
 
 			// we done?
@@ -237,7 +248,7 @@ function Update () {
 
 			if( Input.GetButtonDown('ReflectToggle') )
 			{
-				if( numReflections >= GetLevel().maxReflections )
+				if( numReflections >= GetLevel().maxReflections && !debugUnlimited )
 				{
 					// no more allowed
 					AudioSource.PlayClipAtPoint( maxedReflectionsSnd, hostcam.transform.position );
