@@ -16,7 +16,8 @@ var keyPrefab : GameObject;
 var background : GameObject;
 
 // the current collision geometry polygon will be triangulated into this object
-var trisHost : MeshFilter;
+var geoTriRender : MeshFilter;
+var newGeoTriRender : MeshFilter;
 var debugHost:DebugTriangulate = null;
 
 //----------------------------------------
@@ -88,6 +89,7 @@ function OnGetKey( keyObj:GameObject )
 
 function SwitchLevel( id:int )
 {
+	Debug.Log('switching to level '+id);
 	// we'll be changing the geo, obviously, so make a copy
 	isReflecting = false;
 	numReflections = 0;
@@ -97,9 +99,9 @@ function SwitchLevel( id:int )
 	UpdateCollisionMesh();
 
 	// draw the triangulated mesh
-	if( trisHost != null ) {
-		ProGeo.TriangulateSimplePolygon( currLevGeo, trisHost.mesh, false );
-		trisHost.mesh.RecalculateNormals();
+	if( geoTriRender != null ) {
+		ProGeo.TriangulateSimplePolygon( currLevGeo, geoTriRender.mesh, false );
+		SetNormalsAtCamera( geoTriRender.mesh );
 	}
 
 	player.transform.position = levels[id].playerPos;
@@ -112,8 +114,8 @@ function SwitchLevel( id:int )
 
 	hostcam.transform.position = Utils.ToVector3( levels[id].areaCenter, hostcam.transform.position.z );
 
-	Debug.Log('spawned player at '+player.transform.position);
-	Debug.Log('level area center at '+levels[id].areaCenter);
+	//Debug.Log('spawned player at '+player.transform.position);
+	//Debug.Log('level area center at '+levels[id].areaCenter);
 
 	//----------------------------------------
 	//  Spawn keys
@@ -136,8 +138,8 @@ function SwitchLevel( id:int )
 	UpdateGoalLocked();
 }
 
-function Awake () {
-
+function Awake()
+{
 	if( Singleton != null )
 	{
 		Debug.LogError( 'Multiple game controllers in scene!' );
@@ -169,6 +171,11 @@ function UpdateCollisionMesh()
 		Destroy( gameObject.GetComponent(MeshCollider) );
 }
 
+function SetNormalsAtCamera( mesh:Mesh )
+{
+	mesh.RecalculateNormals();
+}
+
 function GetMouseXYWorldPos() : Vector2
 {
 	var ray = hostcam.ScreenPointToRay( Input.mousePosition );
@@ -186,7 +193,7 @@ function Update () {
 
 	if( currLevGeo != null )
 	{
-		//currLevGeo.DebugDraw( Color.blue, 0.0 );
+		currLevGeo.DebugDraw( Color.blue, 0.0 );
 
 		if( Input.GetButtonDown('Reset') )
 		{
@@ -201,7 +208,7 @@ function Update () {
 		}
 		else if( isReflecting )
 		{
-			helpText.text = 'Left Click - Confirm\nRight Click - Cancel';
+			helpText.text = 'Left Click - Confirm\nSpace Bar - Cancel';
 			// draw the reflected shape
 			var newShape = currLevGeo.Duplicate();
 			var lineEnd = GetMouseXYWorldPos();
@@ -210,9 +217,10 @@ function Update () {
 			//newShape.DebugDraw( Color.yellow, 0.0 );
 			//Debug.DrawLine( lineStart, lineEnd, Color.red, 0.0 );
 
-			if( trisHost != null ) {
-				ProGeo.TriangulateSimplePolygon( newShape, trisHost.mesh, false );
-				trisHost.mesh.RecalculateNormals();
+			if( newGeoTriRender != null ) {
+				ProGeo.TriangulateSimplePolygon( newShape, newGeoTriRender.mesh, false );
+				SetNormalsAtCamera( newGeoTriRender.mesh );
+				newGeoTriRender.gameObject.GetComponent(Renderer).enabled = true;
 
 				// debug output all verts..
 				if( Input.GetButtonDown('DebugReset') && debugHost != null ) {
@@ -223,23 +231,34 @@ function Update () {
 			// we done?
 			if( Input.GetButtonDown('ReflectToggle') )
 			{
+				// confirmed
 				AudioSource.PlayClipAtPoint( confirmReflectSnd, hostcam.transform.position );
+
 				// use new shape
 				currLevGeo = newShape;
 				UpdateCollisionMesh();
 				isReflecting = false;
 				numReflections++;
 
-				// draw the triangulated mesh
-				if( trisHost != null ) {
-					ProGeo.TriangulateSimplePolygon( newShape, trisHost.mesh, false );
-					trisHost.mesh.RecalculateNormals();
+				// update rendered mesh
+				if( geoTriRender != null ) {
+					ProGeo.TriangulateSimplePolygon( currLevGeo, geoTriRender.mesh, false );
+					SetNormalsAtCamera( geoTriRender.mesh );
+				}
+
+				if( newGeoTriRender != null ) {
+					// hide new-geo host
+					newGeoTriRender.gameObject.GetComponent(Renderer).enabled = false;
 				}
 			}
-			else if( Input.GetButtonDown('Cancel') )
+			else if( Input.GetButtonDown('Cancel'))
 			{
 				AudioSource.PlayClipAtPoint( cancelReflectSnd, hostcam.transform.position );
 				isReflecting = false;
+				if( newGeoTriRender != null ) {
+					// hide new-geo host
+					newGeoTriRender.gameObject.GetComponent(Renderer).enabled = false;
+				}
 			}
 		}
 		else

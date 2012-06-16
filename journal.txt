@@ -1,20 +1,14 @@
 
 PLAYTEST: 
-- triangulation!
-almost there, but our monotone decomp isn't correct.
-Need to implement this:
-http://research.engineering.wustl.edu/~pless/546/lectures/l7.html
-http://groups.csail.mit.edu/graphics/classes/6.838/F01/lectures/PolygonTriangulation/monotone2.html
-OK review the algorithms again and make sure we're handling the merge cases correctly..
-
+- clearer visual feedback about reflection - what sort of animation?
 - fix character walking up slope problem
 	ok actually just caused by in-air acceleration
 	potential solution: Only allow in-air accel if there is vertical speed? hmm
 	--> or just check for left/right walls and disallow in-air acceleration into walls of a certain normal? 
-- make line of reflection extend the whole screen
+- still draw outline of polygon
 - add per-level tutorial/story text
 - SERIOUSLY consider grid-snapping (and angles) to keep things less fidgety..
-	- although the grid bg helps already
+	- although the visual grid bg helps already
 
 ART:
 - make "ghost trail" effect for main character
