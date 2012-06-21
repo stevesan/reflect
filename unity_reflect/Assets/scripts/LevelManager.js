@@ -3,6 +3,18 @@
 import System.Collections.Generic;
 
 //----------------------------------------
+//  A level object, such as a key
+//	TODO - this is really really not gonna scale..we can't just like reproduce the whole object properties system..
+//	need to just get inkscape level geom into the game, then use the Unity Editor to place objects..
+//	Maybe should just use Blender and import the model..?
+//----------------------------------------
+class LevelObject
+{
+	var type:String;
+	var pos:Vector3;
+}
+
+//----------------------------------------
 //  A single level
 //----------------------------------------
 class LevelInfo
@@ -10,7 +22,7 @@ class LevelInfo
 	var geo = new Polygon2D();
 	var playerPos:Vector2;
 	var goalPos:Vector2;
-	var keys = new List.<Vector2>();
+	var objects = new List.<LevelObject>();
 	var areaCenter:Vector2;
 	var maxReflections:int = 2;
 }
@@ -44,7 +56,7 @@ static function ParseLevels( reader:StringReader ) : List.<LevelInfo>
 	var maxReflections = new Array();
 	var players = new List.<Rect>();
 	var goals = new List.<Vector2>();
-	var keys = new List.<Vector2>();
+	var objects = new List.<LevelObject>();
 	var geos = new List.<Polygon2D>();
 
 	var line = reader.ReadLine();
@@ -60,8 +72,6 @@ static function ParseLevels( reader:StringReader ) : List.<LevelInfo>
 			players.Add( ParseRect( parts ) );
 		else if( parts[0] == 'goal' )
 			goals.Add( ParseRectCenter( parts ) );
-		else if( parts[0] == 'key' )
-			keys.Add( ParseRectCenter( parts ) );
 		else if( parts[0] == 'levelGeo' )
 		{
 			var numCmds = parseInt( parts[1] );
@@ -91,9 +101,12 @@ static function ParseLevels( reader:StringReader ) : List.<LevelInfo>
 			}
 			geos.Add( geo );
 		}
-		else
-		{
-			Debug.LogError('Unknown game obj type in line = "'+line+'"');
+		else {
+			// some other object type, like a key
+			var obj = new LevelObject();
+			obj.type = parts[0];
+			obj.pos = ParseRectCenter( parts );
+			objects.Add( obj );
 		}
 		line = reader.ReadLine();
 	}
@@ -140,10 +153,10 @@ static function ParseLevels( reader:StringReader ) : List.<LevelInfo>
 			Debug.LogError('no goal found for level '+infos.Count);
 
 		// 0 or many keys allowed
-		for( key in keys )
+		for( lobj in objects )
 		{
-			if( area.Contains( key ) )
-				info.keys.Add( key );
+			if( area.Contains( lobj.pos ) )
+				info.objects.Add( lobj );
 		}
 
 		found = false;
@@ -166,8 +179,8 @@ static function ParseLevels( reader:StringReader ) : List.<LevelInfo>
 		info.goalPos /= playerWidth;
 		info.areaCenter /= playerWidth;
 		info.geo.ScalePoints( 1.0/playerWidth );
-		for( i = 0; i < info.keys.Count; i++ )
-			info.keys[i] /= playerWidth;
+		for( i = 0; i < info.objects.Count; i++ )
+			info.objects[i].pos /= playerWidth;
 
 		infos.Add(info);
 

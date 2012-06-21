@@ -1,10 +1,33 @@
 
 PLAYTEST: 
-- clearer visual feedback about reflection - what sort of animation?
 - fix character walking up slope problem
 	ok actually just caused by in-air acceleration
 	potential solution: Only allow in-air accel if there is vertical speed? hmm
 	--> or just check for left/right walls and disallow in-air acceleration into walls of a certain normal? 
+- animation pipeline
+		artist specifies animation intervals, name a b, where a b and photoshop time intervals
+			walk 1 2
+			jump 3 4
+		PS script exports all frames into a single sprite sheet (best to do this for one character)
+		each frame does not necessarily last for the same amount of time
+			with text file like:
+			24 64	// frame size
+			walk
+			0 0.5	// frame#, duration
+			1 0.5	// frame#, duration
+			run
+			2 0.5	// frame#, duration
+			3 0.5	// frame#, duration
+
+		Unity Interface:
+			SpriteAnimation
+				Play( name ); ex Play('walk') Play('run')
+				PlayLoop( name, nloops );	// nLoops == -1 means infinite
+				sends events: OnAnimDone() // so we can, for example, change to a new level for an animation is done. if it is looped, this will only fire when all loops are done
+- ok new level geo pipeline: Use blender to build geometry, then just use Unity to place objects
+
+- level-select screen. Just show the level geometry and detect clicks on level areas! add number overlays
+- clearer visual feedback about reflection - what sort of animation?
 - still draw outline of polygon
 - add per-level tutorial/story text
 - SERIOUSLY consider grid-snapping (and angles) to keep things less fidgety..

@@ -13,6 +13,7 @@ var helpText : GUIText;
 var player : GameObject;
 var goal : GameObject;
 var keyPrefab : GameObject;
+var ballKeyPrefab : GameObject;
 var background : GameObject;
 
 // the current collision geometry polygon will be triangulated into this object
@@ -56,14 +57,16 @@ private var isReflecting = false;
 private var numReflections = 0;
 private var lineStart = Vector2(0,0);
 private var numKeysGot = 0;
-private var keyObjs = new Array();
+private var numKeys = 0;
+private var objectInsts = new Array();
 
 function GetLevel() : LevelInfo { return levels[currLevId]; }
 
 function OnGetGoal()
 {
-	if( numKeysGot == keyObjs.length )
+	if( numKeysGot == numKeys )
 	{
+		// got all required keys
 		AudioSource.PlayClipAtPoint( goalGetSound, hostcam.transform.position );
 		SwitchLevel( (currLevId+1) % levels.Count );
 	}
@@ -75,7 +78,7 @@ function OnGetGoal()
 
 function UpdateGoalLocked()
 {
-	goal.GetComponent(Star).SetLocked( numKeysGot < keyObjs.length );
+	goal.GetComponent(Star).SetLocked( numKeysGot < numKeys );
 }
 
 function OnGetKey( keyObj:GameObject )
@@ -121,18 +124,29 @@ function SwitchLevel( id:int )
 	//  Spawn keys
 	//----------------------------------------
 	numKeysGot = 0;
-	for( key in keyObjs )
-		Destroy(key);
-	keyObjs.Clear();
+	numKeys = 0;
+	for( inst in objectInsts )
+		Destroy(inst);
+	objectInsts.Clear();
 	// always disable the prefab
 	keyPrefab.active = false;
-	for( keyPos in levels[id].keys )
+	ballKeyPrefab.active = false;
+	for( lobj in levels[id].objects )
 	{
-		var obj = Instantiate( keyPrefab, keyPos, keyPrefab.transform.rotation );
+		var obj:GameObject = null;
+
+		if( lobj.type == 'key' ) {
+			numKeys++;
+			obj = Instantiate( keyPrefab, lobj.pos, keyPrefab.transform.rotation );
+		}
+		else if( lobj.type == 'ballKey' ) {
+			numKeys++;
+			obj = Instantiate( ballKeyPrefab, lobj.pos, ballKeyPrefab.transform.rotation );
+		}
 		obj.transform.parent = this.transform;
 		obj.active = true;
-		keyObjs.Push( obj );
-		Debug.Log('spawned key at '+keyPos);
+		objectInsts.Push( obj );
+		Debug.Log('spawned '+lobj.type+' at '+lobj.pos);
 	}
 
 	UpdateGoalLocked();
@@ -263,7 +277,10 @@ function Update () {
 		}
 		else
 		{
-			helpText.text = numReflections + ' / ' + GetLevel().maxReflections;
+			if( GetLevel().maxReflections > 0 )
+				helpText.text = numReflections + ' / ' + GetLevel().maxReflections;
+			else
+				helpText.text = '';
 
 			if( Input.GetButtonDown('ReflectToggle') )
 			{
