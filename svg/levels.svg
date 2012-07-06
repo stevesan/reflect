@@ -37,9 +37,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="3.5741041"
-     inkscape:cx="28.283314"
-     inkscape:cy="-1490.4154"
+     inkscape:zoom="5.0545465"
+     inkscape:cx="518.71351"
+     inkscape:cy="-1344.6059"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="true"
@@ -204,12 +204,12 @@
        gameObjType="levelArea"
        maxReflections="1" />
     <path
-       style="fill:none;stroke:#a20e0e;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;fill-opacity:1"
-       d="m 500,1522.6378 78.28697,0 -35,30 -15,0 0,-9.8713 -40,0 0,-20 z"
+       style="fill:none;stroke:#a20e0e;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="M 576.71303,1522.6378 555,1555 l -15,0 0,-10 -13.30506,0 0.0181,10 -38.42606,0 0,-32.2335 c 29.99834,-0.2888 58.42644,-0.1287 88.42605,-0.1287 z"
        id="path3236"
        inkscape:connector-curvature="0"
        gameObjType="levelGeo"
-       sodipodi:nodetypes="cccccccc" />
+       sodipodi:nodetypes="ccccccccc" />
     <path
        style="fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.58838409000000003;stroke-miterlimit:4;stroke-opacity:1"
        d="m -30,1412.3622 20,0 0,15.6375 -20,0 z"
@@ -396,7 +396,7 @@
        inkscape:connector-curvature="0" />
     <rect
        width="10"
-       y="1527.6378"
+       y="1540"
        x="490"
        height="10"
        id="rect4457-9"
@@ -411,7 +411,7 @@
     <rect
        gameObjType="player"
        width="10"
-       y="1527.6378"
+       y="1540"
        x="515"
        height="10"
        id="rect4455-9"
@@ -784,8 +784,8 @@
        style="fill:#ff3b00;fill-opacity:1;stroke:none"
        id="rect5473"
        height="10"
-       x="550"
-       y="1527.6378"
+       x="555"
+       y="1525"
        width="10" />
     <rect
        width="10"

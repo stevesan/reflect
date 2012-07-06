@@ -14,14 +14,22 @@ function PlayIdem( clip:String )
 		anim.Play(id);
 }
 
+function DidJump()
+{
+	anim.Play('jump');
+}
+
 function Update () {
 	var walk = player.GetWalkingValue();
+	var isJumping = (anim.isPlaying() && anim.clipId == anim.GetClipIdByName( 'jump' ));
 
-	if( walk < 0.0 )
-		PlayIdem('walkLeft');
-	else if( walk > 0.0 )
-		PlayIdem('walkRight');
-	else
-		PlayIdem('idle');
+	if( !isJumping ) {
+		if( walk < 0.0 )
+			PlayIdem('walkLeft');
+		else if( walk > 0.0 )
+			PlayIdem('walkRight');
+		else
+			PlayIdem('idle');
+	}
 
 }
