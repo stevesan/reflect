@@ -169,6 +169,7 @@ function Update () {
 //	6) Stand next to ledge, jump, then tap right - should in-air accel on to ledge
 //	7) Jump off in one dir, press other - should swerve in-air
 //	8) Run towards a too-steep ramp - should NOT go up it
+//	9) JUMP into a too-steep ramp and hold right - should NOT go up it
 //----------------------------------------
 function FixedUpdate()
 {
