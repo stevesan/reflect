@@ -1,21 +1,15 @@
 
 PLAYTEST: 
-- fix character walking up slope problem
-	ok actually just caused by in-air acceleration
-	potential solution: Only allow in-air accel if there is vertical speed? hmm
-	--> or just check for left/right walls and disallow in-air acceleration into walls of a certain normal? 
-- clearer visual feedback about reflection - what sort of animation?
+- make the level geo polygon have pretty outlines
+- implement new point-and-rotate UI
+- think: puzzles where you have to jump then reflect
 - ok new level geo pipeline: Use blender to build geometry, then just use Unity to place objects
 - level-select screen. Just show the level geometry and detect clicks on level areas! add number overlays
 - still draw outline of polygon
+	can use new GL API of Unity! Err.. Can we?
 - add per-level tutorial/story text
 - SERIOUSLY consider grid-snapping (and angles) to keep things less fidgety..
 	- although the visual grid bg helps already
-
-ART:
-- make "ghost trail" effect for main character
-
-TOOLS:
 
 STORY/LYRICS:
 

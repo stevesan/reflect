@@ -39,25 +39,25 @@ private var maxInAirRelAccel = 100.0;
 //  Debugging
 //----------------------------------------
 var debugInfiniteJump = false;
-var debugWalking = false;
+var debugXSpeed = false;
 var debugNoGravity = false;
-var debugGroundTest = false;
+var debugGroundSweep = false;
+var debugGroundSweepDist = false;
+var debugSecs = 0.1;
+var debugColor = Color.red;
 var debugHoldJumping = false;
+var debugRightWall = false;
+var debugLeftWall = false;
 
 //----------------------------------------
 //  State for movement
 //----------------------------------------
-private var facingDir = 1; // 1 or -1
-private var walkingValue = 0.0; // [-1,1]
+private var walkingAnimDir = 0.0; // [-1,1]
 private var jumpPressedPrevFrame = false;
 private var currGoalSpeed = 0.0;	// the speed we are trying to achieve THIS FRAME - this can only be prevented by physics.
 
-function GetFacingDir() {
-	return facingDir;
-}
-
 function GetWalkingValue() {
-	return walkingValue;
+	return walkingAnimDir;
 }
 
 function Reset()
@@ -94,21 +94,7 @@ function AddJumpVelocity( relJumpHeight:float ) {
 	var accel = Vector3.up * v/Time.deltaTime;
 	//Debug.Log("goal velocity = " + v + " dt = " + Time.deltaTime + " accel = " + accel);
 	// We don't use forces for jumping, because sometimes the time deltas for the next frame are not the same.
-	AddVelocity( Vector3.up * v );
-}
-
-function AddVelocity( v:Vector3 )
-{
-	rigidbody.velocity += v;
-}
-
-function ApplyAccelerationViaForce( acc:Vector3 )
-{
-	rigidbody.AddForce( acc * rigidbody.mass );
-}
-
-function GetVelocity() {
-	return rigidbody.velocity;
+	rigidbody.velocity += Vector3.up*v;
 }
 
 function ApplyGravity()
@@ -116,10 +102,11 @@ function ApplyGravity()
 	if( debugNoGravity )
 		return;
 
-	ApplyAccelerationViaForce( Vector3(0,-1,0) * gravityRelMag * (scaleGravity ? GetScale():1.0) );
+	rigidbody.AddForce( rigidbody.mass * Vector3(0,-1,0) * gravityRelMag * (scaleGravity ? GetScale():1.0) );
 }
 
-function DoPerFrameIsGroundedQuery() {
+function DoPerFrameIsGroundedQuery()
+{
 	return GetComponent(IsGrounded).QueryGroundedPerFrame();
 }
 
@@ -127,18 +114,19 @@ function IsGroundedSweepTest() : boolean
 {
 	var rb = rigidbody;
 
+	if( debugGroundSweepDist ) {
+		Debug.DrawLine( rb.transform.position, rb.transform.position - (rb.transform.up*groundTestRelDist*GetEdgeLength()), debugColor, debugSecs );
+	}
+
 	var hit : RaycastHit;
 	if( rb.SweepTest( rb.transform.up*-1, hit, groundTestRelDist*GetEdgeLength() ) )
 	{
 		var rv = hit.normal.y > GetComponent(IsGrounded).minNormalY;
-		if( debugGroundTest )
+		if( debugGroundSweep )
 		{
 			if( rv ) {
-				Debug.DrawRay( hit.point, hit.normal, Color.red, 0.0 );
+				Debug.DrawRay( hit.point, hit.normal, debugColor, debugSecs );
 				Debug.Log('IsGroundedSweepTest TRUE pt = '+hit.point+' normal = ' +hit.normal);
-			}
-			else {
-				Debug.DrawRay( hit.point, hit.normal, Color.green, 0.0 );
 			}
 		}
 		return rv;
@@ -148,50 +136,81 @@ function IsGroundedSweepTest() : boolean
 		return false;
 }
 
+function IsHittingWallSweepTest( dir:Vector3, debug:boolean ) : boolean
+{
+	var rb = rigidbody;
+	var hit : RaycastHit;
+
+	if( rb.SweepTest( dir, hit, groundTestRelDist*GetEdgeLength() ) ) {
+		// do the opposite test of the ground test
+		var rv = Vector3.Dot( hit.normal, dir ) < -0.7;
+
+		if( rv && debug ) {
+			Debug.DrawRay( hit.point, hit.normal, debugColor, debugSecs );
+		}
+
+		return rv;
+	}
+	else
+		return false;
+}
+
 
 function Update () {
 }
 
+//----------------------------------------
+//  TEST CASES for player movement controls:
+//	1) Move in one direction and release - should slip a bit after release.
+//	2) Move in one dir then switch immediately - should slip a bit before changing dir
+//	3) Rapidbly change dir - should not move much
+//	4) While still, jump+right and release - should jump in nice arc, slip a bit on land
+//	5) Run into wall and immediately switch dir - should immediately start in other dir
+//	6) Stand next to ledge, jump, then tap right - should in-air accel on to ledge
+//	7) Jump off in one dir, press other - should swerve in-air
+//	8) Run towards a too-steep ramp - should NOT go up it
+//----------------------------------------
 function FixedUpdate()
 {
 	// Make sure to do this Query every frame.
-	var isGrounded = IsGroundedSweepTest() || DoPerFrameIsGroundedQuery();
+	//var isGrounded = IsGroundedSweepTest() || DoPerFrameIsGroundedQuery();
+	var isGrounded = DoPerFrameIsGroundedQuery();
 
 	if( isPlayer )
 	{
+		//----------------------------------------
+		//  eventualGoalSpeed - the speed we eventually wish to achieve if player input does not change.
+		//----------------------------------------
 		var walkThrottle = Input.GetAxisRaw ("Horizontal");
 		var eventualGoalSpeed = 0.0;
-		var currSpeed = GetVelocity().x;
-				
-		// compute our EVENTUAL goal speed
-		if( Mathf.Abs(walkThrottle) > 0 ) {
-			// update desired facing direction no matter what				
-			facingDir = ( walkThrottle > 0 ? 1 : -1 );
+		var currSpeed = rigidbody.velocity.x;
 
-			// Note that we scale our target walkspeed by current player size
-			// Note that we use GetEdgeLength, NOT GetScale(), since maxMoveRelSpeed is in player-widths / sec, and edge len is meters / player-width
+		//----------------------------------------
+		//  Determine goal speed based on input
+		//----------------------------------------
+		if( Mathf.Abs(walkThrottle) > 0 ) {
+			// it was deteremined that we can control our current speed. go for it!
 			eventualGoalSpeed = GetEdgeLength() * maxMoveRelSpeed * walkThrottle;
 
-			// this pretty much just controls animation
-			if( isGrounded )
-				walkingValue = walkThrottle;
-			else
-				walkingValue = 0.0;
-		}
-		else
-		{
-			// no desired movement
-			walkingValue = 0.0;
-			// don't change facingDir
-
-			// we could technically also stop in-air, but that looks/feels really weird..
+			// signal animation state
 			if( isGrounded ) {
-				// stop when on the ground!
+				walkingAnimDir = ( walkThrottle > 0 ? 1 : -1 );
+			}
+			else {
+				walkingAnimDir = 0;
+			}
+		}
+		else {
+			// no motion inputted
+			walkingAnimDir = 0;	// signal the idle animation
+
+			if( isGrounded ) {
 				eventualGoalSpeed = 0.0;
 			}
-			else
-				// maintain current speed
+			else {
+				// maintain current speed in air
 				eventualGoalSpeed = currSpeed;
+			}
 		}
 
 		//----------------------------------------
@@ -199,9 +218,7 @@ function FixedUpdate()
 		//  if so, then work from that speed instead.
 		//  TESTCASE: bounce back and forth between left/right walls and make sure there is no "stickiness"
 		//----------------------------------------
-		if( Mathf.Abs( eventualGoalSpeed-currSpeed ) < Mathf.Abs( eventualGoalSpeed-currGoalSpeed ) )
-		{
-			// yes - just use the current actual speed then as our new goal speed
+		if( Mathf.Abs( eventualGoalSpeed-currSpeed ) < Mathf.Abs( eventualGoalSpeed-currGoalSpeed ) ) {
 			currGoalSpeed = currSpeed;
 		}
 		
@@ -210,44 +227,51 @@ function FixedUpdate()
 		// compute our actual desired speed delta for this frame, based on interia-inspired moveRelAccel
 		// TEST CASE: back-and-forth inertia. Jump and land "slip"
 		//----------------------------------------
-		var allowedDeltaMag = GetEdgeLength()*moveRelAccel * Time.deltaTime;
-		var goalSpeedDelta = eventualGoalSpeed - currGoalSpeed;
-
-		// clamp by the allowed, while maintaining sign
-		// avoid div by 0..
-		if( Mathf.Abs(goalSpeedDelta) > Mathf.Abs(allowedDeltaMag) )
-			goalSpeedDelta = goalSpeedDelta * Mathf.Abs( allowedDeltaMag / goalSpeedDelta );
-
-		// apply it
+		var maxDeltaMag = GetEdgeLength() * moveRelAccel * Time.deltaTime;
+		var goalSpeedDelta = Mathf.Clamp( eventualGoalSpeed - currGoalSpeed, -maxDeltaMag, maxDeltaMag );
 		currGoalSpeed += goalSpeedDelta;
 
-		// ----------------------------------------
-		// now compute the physics acceleration necessary to achieve currGoalSpeed
-		// the only thing that can stop this is physics, and our own enforced max accel to prevent physics instability
-		// we have this separation in order to push objects
-		var speedDelta = currGoalSpeed - currSpeed;
-		var idealAccel = speedDelta / Time.deltaTime;
+		//----------------------------------------
+		//  We have a desired goal speed. Try to go to it, UNLESS we're in air and we have something blocking us from the side..
+		//----------------------------------------
+		var canApplyForce = true;
 
-		// Compute a force to get us our desired speed
-		// Limit how much force we can exert - otherwise things may go unstable
-
-		var accel : float;
-		if( isGrounded )
-			accel = Mathf.Clamp( idealAccel, -maxWalkRelAccel * GetEdgeLength(), maxWalkRelAccel * GetEdgeLength() );
+		if( !isGrounded ) {
+			// in air... only allow us to accelerate in-air AWAY from walls
+			// check for walls
+			var wallOnLeft = IsHittingWallSweepTest( Vector3(-1,0,0), debugLeftWall );
+			var wallOnRight = IsHittingWallSweepTest( Vector3(1,0,0), debugRightWall );
+			var rightStopped = currGoalSpeed > 0.0 && wallOnRight;
+			var leftStopped = currGoalSpeed < 0.0 && wallOnLeft;
+			canApplyForce = !( rightStopped || leftStopped );
+		}
 		else
-			accel = Mathf.Clamp( idealAccel, -maxInAirRelAccel * GetEdgeLength(), maxInAirRelAccel * GetEdgeLength() );
-			
-		ApplyAccelerationViaForce( transform.right * accel );
+			// on ground - can always apply force
+			canApplyForce = true;
 
-		if( debugWalking )
-			Debug.Log('x speed = '+GetVelocity().x + ' scale = ' + GetScale() );
+		if( canApplyForce ) {
+			//----------------------------------------
+			// We're on the ground, OR we have a valid in-air acceleration.
+			// Compute a force to get us our desired speed
+			// Limit how much force we can exert - otherwise things may go unstable
+			// The only thing that can stop this is physics, and our own enforced max accel to prevent physics instability
+			// We have this separation in order to push objects
+			//----------------------------------------
+			var idealAccel = (currGoalSpeed - currSpeed) / Time.deltaTime;
+			var maxAccelMag = GetEdgeLength() * ( isGrounded ? maxWalkRelAccel : maxInAirRelAccel );
+			var accel = Mathf.Clamp( idealAccel, -maxAccelMag, maxAccelMag );
+			rigidbody.AddForce( rigidbody.mass * transform.right * accel );
+		}
+
+		if( debugXSpeed )
+			Debug.Log('x speed = '+ rigidbody.velocity.x + ' scale = ' + GetScale() );
 		
 		//----------------------------------------
 		// Jumping
 		//----------------------------------------
 
-		// We use GetButton instead of GetButtonDown because that doesn't quite behave correctly on FixedUpdate
-		// Maybe we shouldn't even do jumping on the fixed update?
+		// We use GetButton instead of GetButtonDown because that doesn't quite behave correctly on FixedUpdate. Sometimes it fires multiple times..probably because Input state is synchronized to fixed updates!
+		// Maybe we shouldn't even do jumping on the fixed update? Just set a flag in input..
 		if( Input.GetButton("Jump") && (!jumpPressedPrevFrame||debugHoldJumping)) {
 			if( debugInfiniteJump || isGrounded )
 			{

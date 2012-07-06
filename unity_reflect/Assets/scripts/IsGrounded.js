@@ -1,6 +1,8 @@
 
 var minNormalY = 0.9;
 var debug = false;
+var debugLineSecs = 0.1;
+var debugColor:Color = Color.red;
 
 private var isGrounded = false;
 
@@ -27,7 +29,7 @@ function OnCollisionStay( col : Collision ) : void
 		{
 			if( debug )
 			{
-				Debug.DrawRay( c.point, c.normal, Color.green );
+				Debug.DrawRay( c.point, c.normal, debugColor, debugLineSecs );
 				Debug.Log('IsGrounded TRUE n = '+c.normal);
 			}
 
