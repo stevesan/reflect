@@ -24,7 +24,27 @@ class LevelInfo
 	var goalPos:Vector2;
 	var objects = new List.<LevelObject>();
 	var areaCenter:Vector2;
+	var origAreaCenter:Vector2;
 	var maxReflections:int = 2;
+
+	//----------------------------------------
+	//  Snaps the area centers to a grid where each cell is 125x125
+	//	Then, compares the x,y integer coordinates
+	//	Left to right, top to bottom
+	//----------------------------------------
+	static var levelAreaGridSize = 125.0;
+	static function LevelOrderCompare( a:LevelInfo, b:LevelInfo ) : int
+	{
+		var a_u:int = Mathf.Floor( a.origAreaCenter.x / levelAreaGridSize );
+		var a_v:int = Mathf.Floor( a.origAreaCenter.y / levelAreaGridSize );
+		var b_u:int = Mathf.Floor( b.origAreaCenter.x / levelAreaGridSize );
+		var b_v:int = Mathf.Floor( b.origAreaCenter.y / levelAreaGridSize );
+
+		if( a_v == b_v )
+			return Mathf.RoundToInt( Mathf.Sign(a_u - b_u) );
+		else
+			return Mathf.RoundToInt( Mathf.Sign(b_v - a_v) );
+	}
 }
 
 static function ParseRect( parts:String[] ) : Rect
@@ -121,7 +141,7 @@ static function ParseLevels( reader:StringReader ) : List.<LevelInfo>
 		var area = areas[ iLev ];
 		var found = false;
 		var info = new LevelInfo();
-		info.areaCenter = area.center;
+		info.origAreaCenter = area.center;
 		info.maxReflections = maxReflections[iLev];
 
 		var playerWidth = 1.0;
@@ -177,7 +197,7 @@ static function ParseLevels( reader:StringReader ) : List.<LevelInfo>
 		//----------------------------------------
 		info.playerPos /= playerWidth;
 		info.goalPos /= playerWidth;
-		info.areaCenter /= playerWidth;
+		info.areaCenter = info.origAreaCenter / playerWidth;
 		info.geo.ScalePoints( 1.0/playerWidth );
 		for( i = 0; i < info.objects.Count; i++ )
 			info.objects[i].pos /= playerWidth;
@@ -186,6 +206,12 @@ static function ParseLevels( reader:StringReader ) : List.<LevelInfo>
 
 		i++;
 	}
+
+	//----------------------------------------
+	//  Sort the levels by their visual order in the SVG
+	//----------------------------------------
+	infos.Sort( LevelInfo.LevelOrderCompare );
+
 
 	return infos;
 }

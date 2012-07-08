@@ -8,6 +8,7 @@ var inputEnabled = true;
 
 var jumpSnd : AudioClip;
 var landFx : ParticleSystem;
+var jumpFx : ParticleSystem;
 
 // above this Y-speed, the land sound will NOT play
 var landFxMaxVelocity = -5;
@@ -281,12 +282,19 @@ function FixedUpdate()
 	if( (inputEnabled?Input.GetButton("Jump"):false) && (!jumpPressedPrevFrame||debugHoldJumping)) {
 		if( debugInfiniteJump || isGrounded )
 		{
-			if( jumpSnd != null ) AudioSource.PlayClipAtPoint( jumpSnd, transform.position );
-
 			AddJumpVelocity( jumpRelHeight );
 
 			for( obj in eventListeners )
 				obj.SendMessage ("DidJump", SendMessageOptions.DontRequireReceiver);
+
+			//----------------------------------------
+			//  Effects
+			//----------------------------------------
+			if( jumpSnd != null )
+				AudioSource.PlayClipAtPoint( jumpSnd, transform.position );
+			if( jumpFx != null ) {
+				jumpFx.Play();
+			}
 		}
 	}
 
