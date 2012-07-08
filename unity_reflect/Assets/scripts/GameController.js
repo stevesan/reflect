@@ -6,6 +6,7 @@ static var Singleton : GameController = null;
 
 var hostcam : Camera;
 var snapReflectAngle = true;
+var canMoveWhileReflecting = true;
 
 //----------------------------------------
 //  Prefabs/Puppet-objects
@@ -325,15 +326,12 @@ function Update () {
 					AudioSource.PlayClipAtPoint( startReflectSnd, hostcam.transform.position );
 					lineStart = GetMouseXYWorldPos();
 					isReflecting = true;
-					player.GetComponent(PlayerControl).inputEnabled = false;
+					if( !canMoveWhileReflecting ) {
+						player.GetComponent(PlayerControl).inputEnabled = false;
+					}
 				}
 			}
 		}
 
 	}
-
-	// TEMP
-	//hostcam.transform.position.x = player.transform.position.x;
-	//hostcam.transform.position.y = player.transform.position.y;
-
 }

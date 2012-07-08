@@ -1,6 +1,7 @@
 
 PLAYTEST: 
 - LAVA!
+- cartesian ordering for level areas. might just keep my stupid outline..only bad thing is the xml editing..but that's pretty alright
 - make the level geo polygon have pretty outlines
 	can use new GL API of Unity! Err.. Can we?
 - ok new level geo pipeline: Use blender to build geometry, then just use Unity to place objects
