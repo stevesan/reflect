@@ -38,15 +38,15 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="5.0545465"
-     inkscape:cx="518.71351"
-     inkscape:cy="-1344.6059"
+     inkscape:cx="288.12277"
+     inkscape:cy="-1475.3711"
      inkscape:document-units="px"
-     inkscape:current-layer="layer1"
+     inkscape:current-layer="layer2"
      showgrid="true"
      inkscape:window-width="1276"
      inkscape:window-height="756"
-     inkscape:window-x="4"
-     inkscape:window-y="0"
+     inkscape:window-x="-8"
+     inkscape:window-y="3"
      inkscape:window-maximized="0"
      inkscape:snap-global="true"
      showguides="true"
@@ -78,24 +78,6 @@
      inkscape:groupmode="layer"
      id="layer1">
     <rect
-       maxReflections="1"
-       style="fill:#000000;fill-opacity:1;stroke:none"
-       id="rect5683"
-       width="109.99998"
-       height="109.99998"
-       x="-50"
-       y="1612.3622"
-       gameObjType="levelArea" />
-    <rect
-       gameObjType="levelArea"
-       y="1490"
-       x="475"
-       height="109.99998"
-       width="109.99998"
-       id="rect4451-2"
-       style="fill:#000000;fill-opacity:1;stroke:none"
-       maxReflections="0" />
-    <rect
        gameObjType="levelArea"
        y="1118.5431"
        x="-53.526184"
@@ -120,15 +102,6 @@
        height="109.40599"
        width="109.40599"
        id="area1"
-       style="fill:#000000;fill-opacity:1;stroke:none"
-       maxReflections="1" />
-    <rect
-       gameObjType="levelArea"
-       y="1125"
-       x="325"
-       height="99.999992"
-       width="99.999985"
-       id="area2"
        style="fill:#000000;fill-opacity:1;stroke:none"
        maxReflections="1" />
     <rect
@@ -290,12 +263,6 @@
        gameObjType="levelGeo"
        inkscape:connector-curvature="0" />
     <path
-       inkscape:connector-curvature="0"
-       gameObjType="levelGeo"
-       id="path4056"
-       d="m 221.0411,1165 18.78004,0 0,15 -18.78004,0 z"
-       style="fill:#ffffff;fill-opacity:1;stroke:none" />
-    <path
        sodipodi:nodetypes="ccccccc"
        inkscape:connector-curvature="0"
        gameObjType="levelGeo"
@@ -453,6 +420,69 @@
        y="1675"
        width="10"
        gameObjType="player" />
+    <rect
+       maxReflections="2"
+       gameObjType="levelArea"
+       y="1620"
+       x="95"
+       height="99.999977"
+       width="99.999977"
+       id="rect3321"
+       style="fill:#000000;fill-opacity:1;stroke:none" />
+    <path
+       inkscape:connector-curvature="0"
+       gameObjType="levelGeo"
+       id="path3323"
+       d="m 110,1650 40,0 0,40 -40,0 z"
+       style="fill:#ffffff;fill-opacity:1;stroke:none" />
+    <rect
+       gameObjType="levelArea"
+       y="1125"
+       x="325"
+       height="99.999992"
+       width="99.999985"
+       id="area2"
+       style="fill:#000000;fill-opacity:1;stroke:none"
+       maxReflections="1" />
+    <rect
+       gameObjType="levelArea"
+       y="1490"
+       x="475"
+       height="109.99998"
+       width="109.99998"
+       id="rect4451-2"
+       style="fill:#000000;fill-opacity:1;stroke:none"
+       maxReflections="0" />
+    <rect
+       maxReflections="1"
+       style="fill:#000000;fill-opacity:1;stroke:none"
+       id="rect5683"
+       width="109.99998"
+       height="109.99998"
+       x="-50"
+       y="1612.3622"
+       gameObjType="levelArea" />
+    <path
+       inkscape:connector-curvature="0"
+       gameObjType="levelGeo"
+       id="path4056"
+       d="m 221.0411,1165 18.78004,0 0,15 -18.78004,0 z"
+       style="fill:#ffffff;fill-opacity:1;stroke:none" />
+    <rect
+       style="fill:#000000;fill-opacity:1;stroke:none"
+       id="rect3351"
+       width="99.999977"
+       height="99.999977"
+       x="225"
+       y="1625"
+       gameObjType="levelArea"
+       maxReflections="2" />
+    <path
+       style="fill:#ffffff;fill-opacity:1;stroke:none"
+       d="m 240,1655 40,0 0,40 -40,0 z"
+       id="path3353"
+       gameObjType="levelGeo"
+       inkscape:connector-curvature="0" />
   </g>
   <g
      inkscape:groupmode="layer"
@@ -616,8 +646,8 @@
        style="fill:#00a3ff;fill-opacity:1;stroke:none"
        id="rect4287"
        height="10"
-       x="145"
-       y="1555"
+       x="165"
+       y="1540"
        width="10" />
     <rect
        gameObjType="key"
@@ -819,5 +849,53 @@
        id="rect5827"
        style="fill:#ff3b00;fill-opacity:1;stroke:none"
        gameObjType="ballKey" />
+    <rect
+       gameObjType="goal"
+       style="fill:#ffff00;fill-opacity:1;stroke:none"
+       id="rect3325"
+       height="10"
+       x="135"
+       y="1655"
+       width="10" />
+    <rect
+       gameObjType="player"
+       width="10"
+       y="1680"
+       x="120"
+       height="10"
+       id="rect3327"
+       style="fill:#00ff00;fill-opacity:1;stroke:none" />
+    <rect
+       width="10"
+       y="1680"
+       x="175"
+       height="10"
+       id="rect3329"
+       style="fill:#00a3ff;fill-opacity:1;stroke:none"
+       gameObjType="key" />
+    <rect
+       width="10"
+       y="1660"
+       x="225"
+       height="10"
+       id="rect3355"
+       style="fill:#ffff00;fill-opacity:1;stroke:none"
+       gameObjType="goal" />
+    <rect
+       style="fill:#00ff00;fill-opacity:1;stroke:none"
+       id="rect3357"
+       height="10"
+       x="250"
+       y="1685"
+       width="10"
+       gameObjType="player" />
+    <rect
+       gameObjType="key"
+       style="fill:#00a3ff;fill-opacity:1;stroke:none"
+       id="rect3359"
+       height="10"
+       x="315"
+       y="1660"
+       width="10" />
   </g>
 </svg>

@@ -1,12 +1,10 @@
 
 PLAYTEST: 
+- LAVA!
 - make the level geo polygon have pretty outlines
-- implement new point-and-rotate UI
-- think: puzzles where you have to jump then reflect
+	can use new GL API of Unity! Err.. Can we?
 - ok new level geo pipeline: Use blender to build geometry, then just use Unity to place objects
 - level-select screen. Just show the level geometry and detect clicks on level areas! add number overlays
-- still draw outline of polygon
-	can use new GL API of Unity! Err.. Can we?
 - add per-level tutorial/story text
 - SERIOUSLY consider grid-snapping (and angles) to keep things less fidgety..
 	- although the visual grid bg helps already

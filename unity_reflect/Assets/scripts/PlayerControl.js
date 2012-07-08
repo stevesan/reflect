@@ -4,9 +4,14 @@
 @script RequireComponent( IsGrounded )
 
 var eventListeners : GameObject[];
-var isPlayer = true;
+var inputEnabled = true;
 
 var jumpSnd : AudioClip;
+var landFx : ParticleSystem;
+
+// above this Y-speed, the land sound will NOT play
+var landFxMaxVelocity = -5;
+var landFxOffset = Vector3(0,-0.5,0);
 
 //----------------------------------------
 //  Movement control parameters
@@ -55,6 +60,8 @@ var debugLeftWall = false;
 private var walkingAnimDir = 0.0; // [-1,1]
 private var jumpPressedPrevFrame = false;
 private var currGoalSpeed = 0.0;	// the speed we are trying to achieve THIS FRAME - this can only be prevented by physics.
+private var prevYSpeed = 0.0;
+var debugMinYSpeed = 0.0;	// debugging
 
 function GetWalkingValue() {
 	return walkingAnimDir;
@@ -177,117 +184,126 @@ function FixedUpdate()
 	//var isGrounded = IsGroundedSweepTest() || DoPerFrameIsGroundedQuery();
 	var isGrounded = DoPerFrameIsGroundedQuery();
 
-	if( isPlayer )
-	{
-		//----------------------------------------
-		//  eventualGoalSpeed - the speed we eventually wish to achieve if player input does not change.
-		//----------------------------------------
-		var walkThrottle = Input.GetAxisRaw ("Horizontal");
-		var eventualGoalSpeed = 0.0;
-		var currSpeed = rigidbody.velocity.x;
+	//----------------------------------------
+	//  eventualGoalSpeed - the speed we eventually wish to achieve if player input does not change.
+	//----------------------------------------
+	var walkThrottle = ( inputEnabled ? Input.GetAxisRaw ("Horizontal") : 0 );
+	var eventualGoalSpeed = 0.0;
+	var currSpeed = rigidbody.velocity.x;
 
-		//----------------------------------------
-		//  Determine goal speed based on input
-		//----------------------------------------
-		if( Mathf.Abs(walkThrottle) > 0 ) {
-			// it was deteremined that we can control our current speed. go for it!
-			eventualGoalSpeed = GetEdgeLength() * maxMoveRelSpeed * walkThrottle;
+	//----------------------------------------
+	//  Determine goal speed based on input
+	//----------------------------------------
+	if( Mathf.Abs(walkThrottle) > 0 ) {
+		// it was deteremined that we can control our current speed. go for it!
+		eventualGoalSpeed = GetEdgeLength() * maxMoveRelSpeed * walkThrottle;
 
-			// signal animation state
-			if( isGrounded ) {
-				walkingAnimDir = ( walkThrottle > 0 ? 1 : -1 );
-			}
-			else {
-				walkingAnimDir = 0;
-			}
+		// signal animation state
+		if( isGrounded ) {
+			walkingAnimDir = ( walkThrottle > 0 ? 1 : -1 );
 		}
 		else {
-			// no motion inputted
-			walkingAnimDir = 0;	// signal the idle animation
-
-			if( isGrounded ) {
-				eventualGoalSpeed = 0.0;
-			}
-			else {
-				// maintain current speed in air
-				eventualGoalSpeed = currSpeed;
-			}
-		}
-
-		//----------------------------------------
-		//  first check if we're actually already closer to our eventual goal 
-		//  if so, then work from that speed instead.
-		//  TESTCASE: bounce back and forth between left/right walls and make sure there is no "stickiness"
-		//----------------------------------------
-		if( Mathf.Abs( eventualGoalSpeed-currSpeed ) < Mathf.Abs( eventualGoalSpeed-currGoalSpeed ) ) {
-			currGoalSpeed = currSpeed;
-		}
-		
-		//----------------------------------------
-		// Adjust our goal speed to move towards the evental goal
-		// compute our actual desired speed delta for this frame, based on interia-inspired moveRelAccel
-		// TEST CASE: back-and-forth inertia. Jump and land "slip"
-		//----------------------------------------
-		var maxDeltaMag = GetEdgeLength() * moveRelAccel * Time.deltaTime;
-		var goalSpeedDelta = Mathf.Clamp( eventualGoalSpeed - currGoalSpeed, -maxDeltaMag, maxDeltaMag );
-		currGoalSpeed += goalSpeedDelta;
-
-		//----------------------------------------
-		//  We have a desired goal speed. Try to go to it, UNLESS we're in air and we have something blocking us from the side..
-		//----------------------------------------
-		var canApplyForce = true;
-
-		if( !isGrounded ) {
-			// in air... only allow us to accelerate in-air AWAY from walls
-			// check for walls
-			var wallOnLeft = IsHittingWallSweepTest( Vector3(-1,0,0), debugLeftWall );
-			var wallOnRight = IsHittingWallSweepTest( Vector3(1,0,0), debugRightWall );
-			var rightStopped = currGoalSpeed > 0.0 && wallOnRight;
-			var leftStopped = currGoalSpeed < 0.0 && wallOnLeft;
-			canApplyForce = !( rightStopped || leftStopped );
-		}
-		else
-			// on ground - can always apply force
-			canApplyForce = true;
-
-		if( canApplyForce ) {
-			//----------------------------------------
-			// We're on the ground, OR we have a valid in-air acceleration.
-			// Compute a force to get us our desired speed
-			// Limit how much force we can exert - otherwise things may go unstable
-			// The only thing that can stop this is physics, and our own enforced max accel to prevent physics instability
-			// We have this separation in order to push objects
-			//----------------------------------------
-			var idealAccel = (currGoalSpeed - currSpeed) / Time.deltaTime;
-			var maxAccelMag = GetEdgeLength() * ( isGrounded ? maxWalkRelAccel : maxInAirRelAccel );
-			var accel = Mathf.Clamp( idealAccel, -maxAccelMag, maxAccelMag );
-			rigidbody.AddForce( rigidbody.mass * transform.right * accel );
-		}
-
-		if( debugXSpeed )
-			Debug.Log('x speed = '+ rigidbody.velocity.x + ' scale = ' + GetScale() );
-		
-		//----------------------------------------
-		// Jumping
-		//----------------------------------------
-
-		// We use GetButton instead of GetButtonDown because that doesn't quite behave correctly on FixedUpdate. Sometimes it fires multiple times..probably because Input state is synchronized to fixed updates!
-		// Maybe we shouldn't even do jumping on the fixed update? Just set a flag in input..
-		if( Input.GetButton("Jump") && (!jumpPressedPrevFrame||debugHoldJumping)) {
-			if( debugInfiniteJump || isGrounded )
-			{
-				if( jumpSnd != null ) AudioSource.PlayClipAtPoint( jumpSnd, transform.position );
-
-				AddJumpVelocity( jumpRelHeight );
-
-				for( obj in eventListeners )
-					obj.SendMessage ("DidJump", SendMessageOptions.DontRequireReceiver);
-			}
+			walkingAnimDir = 0;
 		}
 	}
-	
+	else {
+		// no motion inputted
+		walkingAnimDir = 0;	// signal the idle animation
+
+		if( isGrounded ) {
+			eventualGoalSpeed = 0.0;
+		}
+		else {
+			// maintain current speed in air
+			eventualGoalSpeed = currSpeed;
+		}
+	}
+
+	//----------------------------------------
+	//  first check if we're actually already closer to our eventual goal 
+	//  if so, then work from that speed instead.
+	//  TESTCASE: bounce back and forth between left/right walls and make sure there is no "stickiness"
+	//----------------------------------------
+	if( Mathf.Abs( eventualGoalSpeed-currSpeed ) < Mathf.Abs( eventualGoalSpeed-currGoalSpeed ) ) {
+		currGoalSpeed = currSpeed;
+	}
+
+	//----------------------------------------
+	// Adjust our goal speed to move towards the evental goal
+	// compute our actual desired speed delta for this frame, based on interia-inspired moveRelAccel
+	// TEST CASE: back-and-forth inertia. Jump and land "slip"
+	//----------------------------------------
+	var maxDeltaMag = GetEdgeLength() * moveRelAccel * Time.deltaTime;
+	var goalSpeedDelta = Mathf.Clamp( eventualGoalSpeed - currGoalSpeed, -maxDeltaMag, maxDeltaMag );
+	currGoalSpeed += goalSpeedDelta;
+
+	//----------------------------------------
+	//  We have a desired goal speed. Try to go to it, UNLESS we're in air and we have something blocking us from the side..
+	//----------------------------------------
+	var canApplyForce = true;
+
+	if( !isGrounded ) {
+		// in air... only allow us to accelerate in-air AWAY from walls
+		// check for walls
+		var wallOnLeft = IsHittingWallSweepTest( Vector3(-1,0,0), debugLeftWall );
+		var wallOnRight = IsHittingWallSweepTest( Vector3(1,0,0), debugRightWall );
+		var rightStopped = currGoalSpeed > 0.0 && wallOnRight;
+		var leftStopped = currGoalSpeed < 0.0 && wallOnLeft;
+		canApplyForce = !( rightStopped || leftStopped );
+	}
+	else
+		// on ground - can always apply force
+		canApplyForce = true;
+
+	if( canApplyForce ) {
+		//----------------------------------------
+		// We're on the ground, OR we have a valid in-air acceleration.
+		// Compute a force to get us our desired speed
+		// Limit how much force we can exert - otherwise things may go unstable
+		// The only thing that can stop this is physics, and our own enforced max accel to prevent physics instability
+		// We have this separation in order to push objects
+		//----------------------------------------
+		var idealAccel = (currGoalSpeed - currSpeed) / Time.deltaTime;
+		var maxAccelMag = GetEdgeLength() * ( isGrounded ? maxWalkRelAccel : maxInAirRelAccel );
+		var accel = Mathf.Clamp( idealAccel, -maxAccelMag, maxAccelMag );
+		rigidbody.AddForce( rigidbody.mass * transform.right * accel );
+	}
+
+	if( debugXSpeed )
+		Debug.Log('x speed = '+ rigidbody.velocity.x + ' scale = ' + GetScale() );
+
+	//----------------------------------------
+	// Jumping
+	//----------------------------------------
+
+	// We use GetButton instead of GetButtonDown because that doesn't quite behave correctly on FixedUpdate. Sometimes it fires multiple times..probably because Input state is synchronized to fixed updates!
+	// Maybe we shouldn't even do jumping on the fixed update? Just set a flag in input..
+	if( (inputEnabled?Input.GetButton("Jump"):false) && (!jumpPressedPrevFrame||debugHoldJumping)) {
+		if( debugInfiniteJump || isGrounded )
+		{
+			if( jumpSnd != null ) AudioSource.PlayClipAtPoint( jumpSnd, transform.position );
+
+			AddJumpVelocity( jumpRelHeight );
+
+			for( obj in eventListeners )
+				obj.SendMessage ("DidJump", SendMessageOptions.DontRequireReceiver);
+		}
+	}
+
+	//----------------------------------------
+	//  Play land sound..?
+	//----------------------------------------
+	if( isGrounded && prevYSpeed < landFxMaxVelocity ) {
+		if( landFx != null ) {
+			landFx.transform.position = transform.position + landFxOffset;
+			landFx.Play();
+		}
+	}
+	prevYSpeed = rigidbody.velocity.y;
+	debugMinYSpeed = Mathf.Min( prevYSpeed, debugMinYSpeed );
+
 	// keep this at the end
 	jumpPressedPrevFrame = Input.GetButton("Jump");
-	
+
 	ApplyGravity();	
 }

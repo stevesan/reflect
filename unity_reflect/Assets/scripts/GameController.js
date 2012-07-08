@@ -5,6 +5,7 @@ import System.IO;
 static var Singleton : GameController = null;
 
 var hostcam : Camera;
+var snapReflectAngle = true;
 
 //----------------------------------------
 //  Prefabs/Puppet-objects
@@ -20,6 +21,8 @@ var background : GameObject;
 var geoTriRender : MeshFilter;
 var newGeoTriRender : MeshFilter;
 var debugHost:DebugTriangulate = null;
+
+var mirrorPivotIcon : Renderer;
 
 //----------------------------------------
 //  Assets
@@ -41,7 +44,10 @@ var maxedReflectionsSnd: AudioClip;
 //----------------------------------------
 //  Debug
 //----------------------------------------
+var debugColor = Color.red;
+var debugSecs = 0.0;
 var debugUnlimited = false;
+var debugDrawPolygonOutline = false;
 
 //----------------------------------------
 //  Game state
@@ -95,6 +101,7 @@ function SwitchLevel( id:int )
 	Debug.Log('switching to level '+id);
 	// we'll be changing the geo, obviously, so make a copy
 	isReflecting = false;
+	player.GetComponent(PlayerControl).inputEnabled = true;
 	numReflections = 0;
 	currLevId = id;
 
@@ -207,7 +214,7 @@ function Update () {
 
 	if( currLevGeo != null )
 	{
-		currLevGeo.DebugDraw( Color.blue, 0.0 );
+		//currLevGeo.DebugDraw( Color.blue, 0.0 );
 
 		if( Input.GetButtonDown('Reset') )
 		{
@@ -222,14 +229,34 @@ function Update () {
 		}
 		else if( isReflecting )
 		{
+			//----------------------------------------
+			//  Update visuals
+			//----------------------------------------
+			mirrorPivotIcon.enabled = true;
+			mirrorPivotIcon.transform.position = lineStart;
+
 			helpText.text = 'Left Click - Confirm\nSpace Bar - Cancel';
 			// draw the reflected shape
 			var newShape = currLevGeo.Duplicate();
 			var lineEnd = GetMouseXYWorldPos();
+
+			if( snapReflectAngle ) {
+				// snap the line end to the closest 45 degree angle
+				var delta = lineEnd - lineStart;
+				var angle = Mathf.Atan2( delta.y, delta.x );
+				var angleStep = Mathf.PI / 4;	// 45 deg
+				var snappedAngle = Mathf.Round(angle/angleStep) * angleStep;
+				lineEnd = lineStart + Vector2( Mathf.Cos(snappedAngle), Mathf.Sin(snappedAngle) );
+			}
+
 			newShape.Reflect( lineStart, lineEnd, false );
 			//Debug.Log('shape has '+newShape.GetNumVertices()+' verts, ' + newShape.GetNumEdges()+ ' edges');
 			//newShape.DebugDraw( Color.yellow, 0.0 );
 			//Debug.DrawLine( lineStart, lineEnd, Color.red, 0.0 );
+
+			if( debugDrawPolygonOutline ) {
+				newShape.DebugDraw( debugColor, debugSecs );
+			}
 
 			if( newGeoTriRender != null ) {
 				ProGeo.TriangulateSimplePolygon( newShape, newGeoTriRender.mesh, false );
@@ -252,6 +279,7 @@ function Update () {
 				currLevGeo = newShape;
 				UpdateCollisionMesh();
 				isReflecting = false;
+				player.GetComponent(PlayerControl).inputEnabled = true;
 				numReflections++;
 
 				// update rendered mesh
@@ -269,14 +297,16 @@ function Update () {
 			{
 				AudioSource.PlayClipAtPoint( cancelReflectSnd, hostcam.transform.position );
 				isReflecting = false;
+				player.GetComponent(PlayerControl).inputEnabled = true;
 				if( newGeoTriRender != null ) {
 					// hide new-geo host
 					newGeoTriRender.gameObject.GetComponent(Renderer).enabled = false;
 				}
 			}
 		}
-		else
-		{
+		else {
+			mirrorPivotIcon.enabled = false;
+
 			if( GetLevel().maxReflections > 0 )
 				helpText.text = numReflections + ' / ' + GetLevel().maxReflections;
 			else
@@ -295,6 +325,7 @@ function Update () {
 					AudioSource.PlayClipAtPoint( startReflectSnd, hostcam.transform.position );
 					lineStart = GetMouseXYWorldPos();
 					isReflecting = true;
+					player.GetComponent(PlayerControl).inputEnabled = false;
 				}
 			}
 		}
