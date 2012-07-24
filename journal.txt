@@ -1,14 +1,16 @@
 
 PLAYTEST: 
+- make level geo double-sided for physics? why not?
 - LAVA!
-- cartesian ordering for level areas. might just keep my stupid outline..only bad thing is the xml editing..but that's pretty alright
+- grid-snapping or mirror location to keep things less fidgety..
+	- although the visual grid bg helps already
 - make the level geo polygon have pretty outlines
 	can use new GL API of Unity! Err.. Can we?
-- ok new level geo pipeline: Use blender to build geometry, then just use Unity to place objects
 - level-select screen. Just show the level geometry and detect clicks on level areas! add number overlays
 - add per-level tutorial/story text
-- SERIOUSLY consider grid-snapping (and angles) to keep things less fidgety..
-	- although the visual grid bg helps already
+
+MAYBE, LOW PRIO:
+- ok new level geo pipeline: Use blender to build geometry, then just use Unity to place objects
 
 STORY/LYRICS:
 

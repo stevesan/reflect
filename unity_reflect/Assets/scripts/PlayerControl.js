@@ -64,6 +64,10 @@ private var currGoalSpeed = 0.0;	// the speed we are trying to achieve THIS FRAM
 private var prevYSpeed = 0.0;
 var debugMinYSpeed = 0.0;	// debugging
 
+enum PlayerState { Idle, Walking, Jumping };
+
+var state = PlayerState.Idle;
+
 function GetWalkingValue() {
 	return walkingAnimDir;
 }
@@ -200,12 +204,7 @@ function FixedUpdate()
 		eventualGoalSpeed = GetEdgeLength() * maxMoveRelSpeed * walkThrottle;
 
 		// signal animation state
-		if( isGrounded ) {
-			walkingAnimDir = ( walkThrottle > 0 ? 1 : -1 );
-		}
-		else {
-			walkingAnimDir = 0;
-		}
+		walkingAnimDir = ( walkThrottle > 0 ? 1 : -1 );
 	}
 	else {
 		// no motion inputted
@@ -279,7 +278,7 @@ function FixedUpdate()
 
 	// We use GetButton instead of GetButtonDown because that doesn't quite behave correctly on FixedUpdate. Sometimes it fires multiple times..probably because Input state is synchronized to fixed updates!
 	// Maybe we shouldn't even do jumping on the fixed update? Just set a flag in input..
-	if( (inputEnabled?Input.GetButton("Jump"):false) && (!jumpPressedPrevFrame||debugHoldJumping)) {
+	if( (inputEnabled ? Input.GetButton("Jump") : false) && (!jumpPressedPrevFrame||debugHoldJumping)) {
 		if( debugInfiniteJump || isGrounded )
 		{
 			AddJumpVelocity( jumpRelHeight );
@@ -314,4 +313,19 @@ function FixedUpdate()
 	jumpPressedPrevFrame = Input.GetButton("Jump");
 
 	ApplyGravity();	
+
+	//----------------------------------------
+	//  Update state
+	//----------------------------------------
+	if( isGrounded ) {
+		if( walkThrottle == 0.0 ) {
+			state = PlayerState.Idle;
+		}
+		else {
+			state = PlayerState.Walking;
+		}
+	}
+	else {
+		state = PlayerState.Jumping;
+	}
 }

@@ -150,6 +150,8 @@ function SwitchLevel( id:int )
 		else if( lobj.type == 'ballKey' ) {
 			numKeys++;
 			obj = Instantiate( ballKeyPrefab, lobj.pos, ballKeyPrefab.transform.rotation );
+			// make it NOT collide with the player, so it doesn't affect player's motion
+			Physics.IgnoreCollision( obj.GetComponent(Collider), player.GetComponent(Collider) );
 		}
 		obj.transform.parent = this.transform;
 		obj.active = true;
