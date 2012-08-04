@@ -7,6 +7,7 @@ static var Singleton : GameController = null;
 var hostcam : Camera;
 var snapReflectAngle = true;
 var canMoveWhileReflecting = true;
+private var mirrorAngleSpeed = 2*Mathf.PI;
 
 //----------------------------------------
 //  Prefabs/Puppet-objects
@@ -20,10 +21,11 @@ var background : GameObject;
 
 // the current collision geometry polygon will be triangulated into this object
 var geoTriRender : MeshFilter;
-var newGeoTriRender : MeshFilter;
+// shows a preview of the reflected geometry
+var previewTriRender : MeshFilter;
 var debugHost:DebugTriangulate = null;
 
-var mirrorPivotIcon : Renderer;
+var mirrorPosIcon : Renderer;
 
 //----------------------------------------
 //  Assets
@@ -41,6 +43,7 @@ var confirmReflectSnd : AudioClip;
 var keyGetSound : AudioClip;
 var goalLockedSound: AudioClip;
 var maxedReflectionsSnd: AudioClip;
+var rotateSnd : AudioClip;
 
 //----------------------------------------
 //  Debug
@@ -63,11 +66,18 @@ private var currLevGeo : Polygon2D = null;
 private var isReflecting = false;
 private var numReflections = 0;
 private var lineStart = Vector2(0,0);
+private var lineEnd = Vector2(0,0);
+private var mirrorAngle = 0.0;
+private var goalMirrorAngle = 0.0;
 private var numKeysGot = 0;
 private var numKeys = 0;
 private var objectInsts = new Array();
 
 function GetLevel() : LevelInfo { return levels[currLevId]; }
+
+function GetIsReflecting() : boolean { return isReflecting; }
+function GetMirrorPos() : Vector2 { return lineStart; }
+function GetMirrorAngle() : float { return mirrorAngle; }
 
 function OnGetGoal()
 {
@@ -209,6 +219,48 @@ function GetMouseXYWorldPos() : Vector2
 	return Utils.ToVector2( mouseWpos );
 }
 
+function UpdateMirrorAngle() : void
+{
+	var maxDelta = mirrorAngleSpeed * Time.deltaTime;
+	if( Mathf.Abs(goalMirrorAngle-mirrorAngle) < maxDelta ) {
+		mirrorAngle = goalMirrorAngle;
+	}
+	else {
+		var dir = Mathf.Sign(goalMirrorAngle - mirrorAngle);
+		mirrorAngle += maxDelta * dir;
+	}
+}
+
+function UpdateReflectionLine() : void
+{
+	lineStart = GetMouseXYWorldPos();
+
+	// update angle?
+	if( Input.GetButtonDown('RotateMirrorCW') ) {
+		goalMirrorAngle -= Mathf.PI/4;
+		AudioSource.PlayClipAtPoint( rotateSnd, hostcam.transform.position );
+	}
+	else if( Input.GetButtonDown('RotateMirrorCCW') ) {
+		goalMirrorAngle += Mathf.PI/4;
+		AudioSource.PlayClipAtPoint( rotateSnd, hostcam.transform.position );
+	}
+	//if( goalMirrorAngle < 0 ) goalMirrorAngle += Mathf.PI;
+	//if( goalMirrorAngle >= Mathf.PI ) goalMirrorAngle -= Mathf.PI;
+	UpdateMirrorAngle();
+	lineEnd = lineStart + Vector2( Mathf.Cos(mirrorAngle), Mathf.Sin(mirrorAngle));
+
+/* Old code which used the mouse end for reflection line end..
+	if( snapReflectAngle ) {
+		// snap the line end to the closest 45 degree angle
+		var delta = lineEnd - lineStart;
+		var angle = Mathf.Atan2( delta.y, delta.x );
+		var angleStep = Mathf.PI / 4;	// 45 deg
+		var snappedAngle = Mathf.Round(angle/angleStep) * angleStep;
+		lineEnd = lineStart + Vector2( Mathf.Cos(snappedAngle), Mathf.Sin(snappedAngle) );
+	}
+	*/
+}
+
 function Update () {
 
 	// Always add the MeshCollider component if it's not there
@@ -235,24 +287,17 @@ function Update () {
 			//----------------------------------------
 			//  Update visuals
 			//----------------------------------------
-			mirrorPivotIcon.enabled = true;
-			mirrorPivotIcon.transform.position = lineStart;
+			if( mirrorPosIcon != null ) {
+				mirrorPosIcon.enabled = true;
+				mirrorPosIcon.transform.position = lineStart;
+			}
 
 			helpText.text = 'Left Click - Confirm\nSpace Bar - Cancel';
 			// draw the reflected shape
 			var newShape = currLevGeo.Duplicate();
-			var lineEnd = GetMouseXYWorldPos();
-
-			if( snapReflectAngle ) {
-				// snap the line end to the closest 45 degree angle
-				var delta = lineEnd - lineStart;
-				var angle = Mathf.Atan2( delta.y, delta.x );
-				var angleStep = Mathf.PI / 4;	// 45 deg
-				var snappedAngle = Mathf.Round(angle/angleStep) * angleStep;
-				lineEnd = lineStart + Vector2( Mathf.Cos(snappedAngle), Mathf.Sin(snappedAngle) );
-			}
-
+			UpdateReflectionLine();
 			newShape.Reflect( lineStart, lineEnd, false );
+
 			//Debug.Log('shape has '+newShape.GetNumVertices()+' verts, ' + newShape.GetNumEdges()+ ' edges');
 			//newShape.DebugDraw( Color.yellow, 0.0 );
 			//Debug.DrawLine( lineStart, lineEnd, Color.red, 0.0 );
@@ -261,10 +306,10 @@ function Update () {
 				newShape.DebugDraw( debugColor, debugSecs );
 			}
 
-			if( newGeoTriRender != null ) {
-				ProGeo.TriangulateSimplePolygon( newShape, newGeoTriRender.mesh, false );
-				SetNormalsAtCamera( newGeoTriRender.mesh );
-				newGeoTriRender.gameObject.GetComponent(Renderer).enabled = true;
+			if( previewTriRender != null ) {
+				ProGeo.TriangulateSimplePolygon( newShape, previewTriRender.mesh, false );
+				SetNormalsAtCamera( previewTriRender.mesh );
+				previewTriRender.gameObject.GetComponent(Renderer).enabled = true;
 
 				// debug output all verts..
 				if( Input.GetButtonDown('DebugReset') && debugHost != null ) {
@@ -291,9 +336,9 @@ function Update () {
 					SetNormalsAtCamera( geoTriRender.mesh );
 				}
 
-				if( newGeoTriRender != null ) {
+				if( previewTriRender != null ) {
 					// hide new-geo host
-					newGeoTriRender.gameObject.GetComponent(Renderer).enabled = false;
+					previewTriRender.gameObject.GetComponent(Renderer).enabled = false;
 				}
 			}
 			else if( Input.GetButtonDown('Cancel'))
@@ -301,14 +346,15 @@ function Update () {
 				AudioSource.PlayClipAtPoint( cancelReflectSnd, hostcam.transform.position );
 				isReflecting = false;
 				player.GetComponent(PlayerControl).inputEnabled = true;
-				if( newGeoTriRender != null ) {
+				if( previewTriRender != null ) {
 					// hide new-geo host
-					newGeoTriRender.gameObject.GetComponent(Renderer).enabled = false;
+					previewTriRender.gameObject.GetComponent(Renderer).enabled = false;
 				}
 			}
 		}
 		else {
-			mirrorPivotIcon.enabled = false;
+			if( mirrorPosIcon != null )
+				mirrorPosIcon.enabled = false;
 
 			if( GetLevel().maxReflections > 0 )
 				helpText.text = numReflections + ' / ' + GetLevel().maxReflections;
@@ -328,6 +374,8 @@ function Update () {
 					AudioSource.PlayClipAtPoint( startReflectSnd, hostcam.transform.position );
 					lineStart = GetMouseXYWorldPos();
 					isReflecting = true;
+					mirrorAngle = Mathf.PI / 2;
+					goalMirrorAngle = Mathf.PI / 2;
 					if( !canMoveWhileReflecting ) {
 						player.GetComponent(PlayerControl).inputEnabled = false;
 					}

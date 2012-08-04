@@ -1,13 +1,44 @@
 
 PLAYTEST: 
+- hmm..alternate controls for reflection: click, then the mirror follows the cursor, player can use Q/E keys to rotate..?
+- rocks - ie. static geometry.
+		implement the one puzzle with the steps-shape
+- add per-level tutorial/story text
+- think up puzzles where rock is beneficial!
+- crit damping:
+//----------------------------------------
+//  Returns the next position for an object being forced by a critically-damped spring attached at pos=0
+//	Larger natural-frequency means a faster pull
+//----------------------------------------
+next_pos = critical_damping( prev_pos, curr_pos, timestep, natural_freq )
+A = curr_pos;
+curr_speed = (curr_pos - prev_pos) / timestep;
+B = curr_speed + natural_freq * curr_pos;
+t = timestep;
+next_pos = (A+B*t)*Mathf.Exp( -natural_freq*t );
+return next_pos;
+
+
+- polish stuff to try:
+	snow flakes
+	scrolling bg over grid
+	lighting shafts, behind and in front
+
+	anything can move/rotate slowly, alpha-modulate. ie. rotating sun-rays lighting, hori-scrolling clouds
+	slow alpha-modulation
+	light scenery on bottom, like hills/flowers
+
+	light color changes when you get all keys?
+
+	animate carrot/keys
+	fx when unlock carrot
+	fx when grab keys, pop bubble key
 - make level geo double-sided for physics? why not?
-- LAVA!
 - grid-snapping or mirror location to keep things less fidgety..
 	- although the visual grid bg helps already
 - make the level geo polygon have pretty outlines
 	can use new GL API of Unity! Err.. Can we?
 - level-select screen. Just show the level geometry and detect clicks on level areas! add number overlays
-- add per-level tutorial/story text
 
 MAYBE, LOW PRIO:
 - ok new level geo pipeline: Use blender to build geometry, then just use Unity to place objects
