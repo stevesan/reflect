@@ -45,9 +45,7 @@ class ExportReflectOutput(inkex.Effect):
 					print '%s %f %f %s %s %s' % (elt.get('gameObjType'), pos[0], pos[1], elt.get('width'), elt.get('height'), elt.get('maxReflections'))
 				else:
 					print '%s %f %f %s %s' % (elt.get('gameObjType'), pos[0], pos[1], elt.get('width'), elt.get('height'))
-
-		for elt in svg.iter():
-			if elt.tag.endswith('path') and elt.get('gameObjType') == 'levelGeo':
+			elif elt.tag.endswith('path') and (elt.get('gameObjType') == 'levelGeo' or elt.get('gameObjType')=='rockGeo'):
 				# don't support path transforms yet...
 				if elt.get('transform') != None:
 					sys.stderr.write('path id='+elt.get('id')+' has a transform. Not supported!')

@@ -1,8 +1,9 @@
 
 PLAYTEST: 
-- hmm..alternate controls for reflection: click, then the mirror follows the cursor, player can use Q/E keys to rotate..?
 - rocks - ie. static geometry.
 		implement the one puzzle with the steps-shape
+- sijie's mockup graphics, with the outlines, etc.
+- when y velocity is negative, switch to "falling" anim with ears down
 - add per-level tutorial/story text
 - think up puzzles where rock is beneficial!
 - crit damping:

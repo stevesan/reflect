@@ -23,8 +23,10 @@ class LevelInfo
 	var playerPos:Vector2;
 	var goalPos:Vector2;
 	var objects = new List.<LevelObject>();
-	var areaCenter:Vector2;
-	var origAreaCenter:Vector2;
+	var rockGeo = new Polygon2D();	// rocks - ie. colliders that are immune to reflection
+
+	var areaCenter:Vector2;	// used to position the camera
+	var origAreaCenter:Vector2;	// used to order the levels based on their position in the SVG sheet
 	var maxReflections:int = 2;
 
 	//----------------------------------------
@@ -60,24 +62,55 @@ static function ParseRectCenter( parts:String[] ) : Vector2
 	return rect.center;
 }
 
+static function ReadPolygon2D( parts:String[], reader:StringReader ) : Polygon2D
+{
+	// read in SVG commands, and use the SVG builder
+	var numCmds = parseInt( parts[1] );
+
+	var builder = new SvgPathBuilder();
+	builder.BeginBuilding();
+	builder.ExecuteCommands( reader, 0.0, 1.0, Vector2(0,0), numCmds );
+	builder.EndBuilding();
+
+	// convert svg into polygon2D
+	var poly = new Polygon2D();
+
+	// we can assume that all level paths are closed polygons
+	// so get all but the last point
+	poly.pts = new Vector2[ builder.GetPoints().Count - 1 ];
+	for( var i = 0; i < poly.pts.length; i++ ) {
+		poly.pts[i] = builder.GetPoints()[i];
+	}
+	var npts = poly.pts.length;
+	poly.edgeA = new int[ npts ];
+	poly.edgeB = new int[ npts ];
+
+	// we actually build our edges in CCW direction
+	for( i = 0; i < poly.pts.length; i++ )
+	{
+		poly.edgeA[i] = i;
+		poly.edgeB[(i+1)%npts] = i;
+	}
+
+	return poly;
+}
+
 //----------------------------------------
 //  
 //----------------------------------------
 static function ParseLevels( reader:StringReader ) : List.<LevelInfo>
 {
-	// This just makes sure the Rect class behaves as we expect.
-	var r = new Rect(0,-1000,100,100);
-	Utils.Assert( r.Contains(Vector2(50,-950) ));
-
 	//----------------------------------------
 	//  Parse all the areas and objects
+	//	We do them all in separate lists, because we can only figure out which levels each objects belongs to after we've parsed all the levels
 	//----------------------------------------
-	var areas = new List.<Rect>();
+	var areas = new List.<Rect>();	// areas contain levels
 	var maxReflections = new Array();
 	var players = new List.<Rect>();
 	var goals = new List.<Vector2>();
 	var objects = new List.<LevelObject>();
 	var geos = new List.<Polygon2D>();
+	var rockGeos = new List.<Polygon2D>();
 
 	var line = reader.ReadLine();
 	while( line != null )
@@ -93,34 +126,9 @@ static function ParseLevels( reader:StringReader ) : List.<LevelInfo>
 		else if( parts[0] == 'goal' )
 			goals.Add( ParseRectCenter( parts ) );
 		else if( parts[0] == 'levelGeo' )
-		{
-			var numCmds = parseInt( parts[1] );
-
-			var builder = new SvgPathBuilder();
-			builder.BeginBuilding();
-			builder.ExecuteCommands( reader, 0.0, 1.0, Vector2(0,0), numCmds );
-			builder.EndBuilding();
-
-			var geo = new Polygon2D();
-
-			// we can assume that all level paths are closed polygons
-			// so get all but the last point
-			geo.pts = new Vector2[ builder.GetPoints().Count - 1 ];
-			for( var i = 0; i < geo.pts.length; i++ ) {
-				geo.pts[i] = builder.GetPoints()[i];
-			}
-			var npts = geo.pts.length;
-			geo.edgeA = new int[ npts ];
-			geo.edgeB = new int[ npts ];
-
-			// we actually build our edges in CCW direction
-			for( i = 0; i < geo.pts.length; i++ )
-			{
-				geo.edgeA[i] = i;
-				geo.edgeB[(i+1)%npts] = i;
-			}
-			geos.Add( geo );
-		}
+			geos.Add( ReadPolygon2D(parts, reader) );
+		else if( parts[0] == 'rockGeo' )
+			rockGeos.Add( ReadPolygon2D(parts, reader) );
 		else {
 			// some other object type, like a key
 			var obj = new LevelObject();
@@ -146,10 +154,8 @@ static function ParseLevels( reader:StringReader ) : List.<LevelInfo>
 
 		var playerWidth = 1.0;
 		// find the first player that's in the area
-		for( player in players )
-		{
-			if( area.Contains( player.center ) )
-			{
+		for( player in players ) {
+			if( area.Contains( player.center ) ) {
 				info.playerPos = player.center;
 				playerWidth = player.width;
 				found = true;
@@ -160,10 +166,8 @@ static function ParseLevels( reader:StringReader ) : List.<LevelInfo>
 			Debug.LogError('no player found for level '+infos.Count);
 
 		found = false;
-		for( pos in goals )
-		{
-			if( area.Contains( pos ) )
-			{
+		for( pos in goals ) {
+			if( area.Contains( pos ) ) {
 				info.goalPos = pos;
 				found = true;
 				break;
@@ -172,18 +176,16 @@ static function ParseLevels( reader:StringReader ) : List.<LevelInfo>
 		if( !found )
 			Debug.LogError('no goal found for level '+infos.Count);
 
-		// 0 or many keys allowed
-		for( lobj in objects )
-		{
+		// level objects - don't care
+		for( lobj in objects ) {
 			if( area.Contains( lobj.pos ) )
 				info.objects.Add( lobj );
 		}
 
 		found = false;
-		for( geo in geos )
-		{
-			if( area.Contains( geo.pts[0] ) )
-			{
+		// level geometry - need >= 1
+		for( geo in geos ) {
+			if( area.Contains( geo.pts[0] ) ) {
 				found = true;
 				info.geo.Append( geo );
 				// don't break, as we can have many geos
@@ -192,6 +194,13 @@ static function ParseLevels( reader:StringReader ) : List.<LevelInfo>
 		if( !found )
 			Debug.LogError('no geometry found for level '+infos.Count);
 
+		// rock geo
+		for( geo in rockGeos ) {
+			if( area.Contains( geo.pts[0] ) ) {
+				info.rockGeo.Append( geo );
+			}
+		}
+
 		//----------------------------------------
 		//  Normalize everything so the player's size is 1.0
 		//----------------------------------------
@@ -199,7 +208,8 @@ static function ParseLevels( reader:StringReader ) : List.<LevelInfo>
 		info.goalPos /= playerWidth;
 		info.areaCenter = info.origAreaCenter / playerWidth;
 		info.geo.ScalePoints( 1.0/playerWidth );
-		for( i = 0; i < info.objects.Count; i++ )
+		info.rockGeo.ScalePoints( 1.0/playerWidth );
+		for( var i = 0; i < info.objects.Count; i++ )
 			info.objects[i].pos /= playerWidth;
 
 		infos.Add(info);

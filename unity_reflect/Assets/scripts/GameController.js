@@ -21,6 +21,8 @@ var background : GameObject;
 
 // the current collision geometry polygon will be triangulated into this object
 var geoTriRender : MeshFilter;
+var rockCollider : DynamicMeshCollider;
+var rockRender : MeshFilter;
 // shows a preview of the reflected geometry
 var previewTriRender : MeshFilter;
 var debugHost:DebugTriangulate = null;
@@ -125,6 +127,22 @@ function SwitchLevel( id:int )
 		SetNormalsAtCamera( geoTriRender.mesh );
 	}
 
+	// update rock collider
+	if( levels[id].rockGeo.pts != null ) {
+		ProGeo.BuildBeltMesh( levels[id].rockGeo, -10, 10, true,
+				rockCollider.GetMesh() );
+		rockCollider.OnMeshChanged();
+
+		// update rock render
+		ProGeo.TriangulateSimplePolygon( levels[id].rockGeo,
+				rockRender.mesh, false );
+	}
+	else {
+		rockCollider.GetMesh().Clear();
+		rockCollider.OnMeshChanged();
+		rockRender.mesh.Clear();
+	}
+
 	player.transform.position = levels[id].playerPos;
 	player.GetComponent(PlayerControl).Reset();
 	goal.transform.position = levels[id].goalPos;
@@ -197,12 +215,7 @@ function UpdateCollisionMesh()
 	ProGeo.BuildBeltMesh(
 			currLevGeo.pts, currLevGeo.edgeA, currLevGeo.edgeB,
 			-10, 10, false, GetComponent(MeshFilter).mesh );
-
-	// Destroy the meshcollider component, but remember it isn't
-	// actually destroyed until the end of the Update
-	// It will get added in the next Update
-	if( gameObject.GetComponent(MeshCollider) != null )
-		Destroy( gameObject.GetComponent(MeshCollider) );
+	GetComponent(DynamicMeshCollider).OnMeshChanged();
 }
 
 function SetNormalsAtCamera( mesh:Mesh )
@@ -262,11 +275,6 @@ function UpdateReflectionLine() : void
 }
 
 function Update () {
-
-	// Always add the MeshCollider component if it's not there
-	if( gameObject.GetComponent(MeshCollider) == null )
-		gameObject.AddComponent(MeshCollider);
-
 	if( currLevGeo != null )
 	{
 		//currLevGeo.DebugDraw( Color.blue, 0.0 );
