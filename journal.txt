@@ -1,37 +1,18 @@
 
 PLAYTEST: 
-- rocks - ie. static geometry.
-		implement the one puzzle with the steps-shape
-- sijie's mockup graphics, with the outlines, etc.
+- for SJ:
+	animate carrot/keys
+	light scenery on bottom, like hills/flowers
 - when y velocity is negative, switch to "falling" anim with ears down
+- sijie's mockup graphics, with the outlines, etc.
 - add per-level tutorial/story text
-- think up puzzles where rock is beneficial!
-- crit damping:
-//----------------------------------------
-//  Returns the next position for an object being forced by a critically-damped spring attached at pos=0
-//	Larger natural-frequency means a faster pull
-//----------------------------------------
-next_pos = critical_damping( prev_pos, curr_pos, timestep, natural_freq )
-A = curr_pos;
-curr_speed = (curr_pos - prev_pos) / timestep;
-B = curr_speed + natural_freq * curr_pos;
-t = timestep;
-next_pos = (A+B*t)*Mathf.Exp( -natural_freq*t );
-return next_pos;
-
-
 - polish stuff to try:
-	snow flakes
+	snow flakes, randomly jittered for "wind"
 	scrolling bg over grid
 	lighting shafts, behind and in front
-
 	anything can move/rotate slowly, alpha-modulate. ie. rotating sun-rays lighting, hori-scrolling clouds
 	slow alpha-modulation
-	light scenery on bottom, like hills/flowers
-
 	light color changes when you get all keys?
-
-	animate carrot/keys
 	fx when unlock carrot
 	fx when grab keys, pop bubble key
 - make level geo double-sided for physics? why not?
