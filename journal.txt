@@ -1,5 +1,7 @@
 
 PLAYTEST: 
+- reflect effects:
+		current geo "behind" mirror (ie. in the reflected side) should be in dotted outline?
 - for SJ:
 	animate carrot/keys
 	light scenery on bottom, like hills/flowers

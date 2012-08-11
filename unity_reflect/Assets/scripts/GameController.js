@@ -134,8 +134,8 @@ function SwitchLevel( id:int )
 		rockCollider.OnMeshChanged();
 
 		// update rock render
-		ProGeo.TriangulateSimplePolygon( levels[id].rockGeo,
-				rockRender.mesh, false );
+		ProGeo.TriangulateSimplePolygon( levels[id].rockGeo, rockRender.mesh, false );
+		SetNormalsAtCamera( rockRender.mesh );
 	}
 	else {
 		rockCollider.GetMesh().Clear();

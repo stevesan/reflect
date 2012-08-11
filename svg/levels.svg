@@ -38,10 +38,10 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="3.162612"
-     inkscape:cx="370.03523"
-     inkscape:cy="-791.64171"
+     inkscape:cx="404.83163"
+     inkscape:cy="-590.01761"
      inkscape:document-units="px"
-     inkscape:current-layer="layer1"
+     inkscape:current-layer="layer2"
      showgrid="true"
      inkscape:window-width="1276"
      inkscape:window-height="756"
@@ -773,11 +773,11 @@
        id="rect3328"
        height="10"
        x="320"
-       y="965"
+       y="970"
        width="10" />
     <path
        style="fill:#ffffff;fill-opacity:1;stroke:none"
-       d="m 245,960 45,0 0.25,55 -25.25,0 0,-40 -20,0 z"
+       d="m 245,955 45,0 0.25,65 -25.25,0 0,-40 -20,0 z"
        id="path3336"
        gameObjType="levelGeo"
        inkscape:connector-curvature="0"
@@ -787,14 +787,14 @@
        inkscape:connector-curvature="0"
        gameObjType="rockGeo"
        id="path3334"
-       d="m 280,980 20,0 0,20 -20,0 z"
+       d="m 280,985 20,0 0,20 -20,0 z"
        style="fill:#ae550b;fill-opacity:1;stroke:none" />
     <rect
        style="fill:#00ff00;fill-opacity:1;stroke:none;display:inline"
        id="rect3330"
        height="10"
        x="250"
-       y="965"
+       y="970"
        width="10"
        gameObjType="player" />
     <rect
@@ -1293,8 +1293,8 @@
        width="10" />
     <rect
        width="10"
-       y="750"
-       x="400"
+       y="820"
+       x="415"
        height="10"
        id="rect3535"
        style="fill:#00a3ff;fill-opacity:1;stroke:none"
