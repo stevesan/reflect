@@ -23,7 +23,7 @@ var landFxOffset = Vector3(0,-0.5,0);
 private var maxMoveRelSpeed = 5;	
 
 // This is how the movement actually feels. Less -> more perceived inertia
-private var moveRelAccel = 25.0;
+private var moveRelAccel = 999.0;
 
 // Relative to current player width (to prevent floatiness when we're very large).
 private var gravityRelMag = 40;	

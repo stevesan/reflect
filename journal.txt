@@ -1,12 +1,15 @@
 
 PLAYTEST: 
-- reflect effects:
+- do a fade-to-black between levels
+- look at how Sworcery does its "worship mode". When in mirror mode, we should have a low hum noise in the BG, it should shimmer when the mouse moves, light should emit from the edge, etc.
+- stripes across mirror
+- sijie's mockup graphics, with the outlines, etc.
+- reflect effects: try some "looks" in photoshop..
 		current geo "behind" mirror (ie. in the reflected side) should be in dotted outline?
 - for SJ:
 	animate carrot/keys
 	light scenery on bottom, like hills/flowers
 - when y velocity is negative, switch to "falling" anim with ears down
-- sijie's mockup graphics, with the outlines, etc.
 - add per-level tutorial/story text
 - polish stuff to try:
 	snow flakes, randomly jittered for "wind"
