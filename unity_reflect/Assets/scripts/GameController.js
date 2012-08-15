@@ -13,7 +13,10 @@ private var mirrorAngleSpeed = 2*Mathf.PI;
 //  Prefabs/Puppet-objects
 //----------------------------------------
 var helpText : GUIText;
+var levelNumber : GUIText;
+var titleText : GUIText;
 var player : GameObject;
+var playerFader : Tk2dAnimSpriteFade;
 var goal : GameObject;
 var keyPrefab : GameObject;
 var ballKeyPrefab : GameObject;
@@ -28,6 +31,11 @@ var previewTriRender : MeshFilter;
 var debugHost:DebugTriangulate = null;
 
 var mirrorPosIcon : Renderer;
+var mainLight : Light;
+var fadeOutTime = 0.5;
+var fadeInTime = 0.1;
+private var origLightIntensity : float;
+private var fadeStart : float;
 
 //----------------------------------------
 //  Assets
@@ -60,7 +68,9 @@ var debugDrawPolygonOutline = false;
 //----------------------------------------
 private var levels : List.<LevelInfo> = null;
 private var currLevId : int = 0;
+private var goalLevId : int = 0;
 private var currLevGeo : Polygon2D = null;
+private var gamestate:String;
 
 //----------------------------------------
 //  Reflection UI state
@@ -83,16 +93,34 @@ function GetMirrorAngle() : float { return mirrorAngle; }
 
 function OnGetGoal()
 {
-	if( numKeysGot == numKeys )
-	{
-		// got all required keys
-		AudioSource.PlayClipAtPoint( goalGetSound, hostcam.transform.position );
-		SwitchLevel( (currLevId+1) % levels.Count );
+	if( gamestate == 'playing' ) {
+		if( numKeysGot == numKeys ) {
+			// got all required keys, touched unlocked goal - yay
+			AudioSource.PlayClipAtPoint( goalGetSound, hostcam.transform.position );
+			FadeToLevel( (currLevId+1) % levels.Count );
+		}
+		else
+		{
+			AudioSource.PlayClipAtPoint( goalLockedSound, hostcam.transform.position );
+		}
 	}
-	else
-	{
-		AudioSource.PlayClipAtPoint( goalLockedSound, hostcam.transform.position );
-	}
+}
+
+//----------------------------------------
+//  t is from 0 to 1
+//----------------------------------------
+function SetFadeAmount( t:float ) {
+	mainLight.intensity = t * origLightIntensity;
+	levelNumber.GetComponent(GUITextFade).SetFadeAmount(t);
+	helpText.GetComponent(GUITextFade).SetFadeAmount(t);
+	playerFader.SetFadeAmount(t);
+}
+
+function FadeToLevel( levId:int ) {
+	// fade into next level
+	gamestate = 'fadingOut';
+	fadeStart = Time.time;
+	goalLevId = levId;
 }
 
 function UpdateGoalLocked()
@@ -127,7 +155,7 @@ function SwitchLevel( id:int )
 		SetNormalsAtCamera( geoTriRender.mesh );
 	}
 
-	// update rock collider
+	// update rocks collider
 	if( levels[id].rockGeo.pts != null ) {
 		ProGeo.BuildBeltMesh( levels[id].rockGeo, -10, 10, true,
 				rockCollider.GetMesh() );
@@ -143,6 +171,7 @@ function SwitchLevel( id:int )
 		rockRender.mesh.Clear();
 	}
 
+	// position the player
 	player.transform.position = levels[id].playerPos;
 	player.GetComponent(PlayerControl).Reset();
 	goal.transform.position = levels[id].goalPos;
@@ -151,6 +180,7 @@ function SwitchLevel( id:int )
 	background.transform.position = levels[id].areaCenter;
 	background.transform.position.z = 10;
 
+	// move camera to see the level
 	hostcam.transform.position = Utils.ToVector3( levels[id].areaCenter, hostcam.transform.position.z );
 
 	//Debug.Log('spawned player at '+player.transform.position);
@@ -187,7 +217,13 @@ function SwitchLevel( id:int )
 		Debug.Log('spawned '+lobj.type+' at '+lobj.pos);
 	}
 
+	// update goal state
 	UpdateGoalLocked();
+
+	// put up correct status text
+	levelNumber.text = 'Moment '+(currLevId+1)+ '/'+levels.Count+
+	'\nR - Reset'+
+	'\n[ ] - Prev/Next';
 }
 
 function Awake()
@@ -206,8 +242,15 @@ function Awake()
 		levels = LevelManager.ParseLevels( reader );
 		Debug.Log('Read in '+levels.Count+' levels');
 
-		SwitchLevel( 0 );
+		origLightIntensity = mainLight.intensity;
 	}
+}
+
+function Start()
+{
+	SetFadeAmount( 0 );
+	fadeStart = Time.time;
+	gamestate = 'startscreen';
 }
 
 function UpdateCollisionMesh()
@@ -274,122 +317,165 @@ function UpdateReflectionLine() : void
 	*/
 }
 
-function Update () {
-	if( currLevGeo != null )
-	{
-		//currLevGeo.DebugDraw( Color.blue, 0.0 );
+function Update()
+{
+	if( gamestate == 'startscreen' ) {
+		// fading in
+		var alpha = Mathf.Clamp( (Time.time-fadeStart) / fadeInTime, 0.0, 1.0 );
+		SetFadeAmount( alpha );
 
-		if( Input.GetButtonDown('Reset') )
-		{
+		// clear the other text objects
+		levelNumber.text = '';
+		helpText.text = '';
+
+		if( Input.GetButtonDown('ReflectToggle') ) {
+			FadeToLevel( 0 );
+			Destroy( titleText );
 			AudioSource.PlayClipAtPoint( restartSnd, hostcam.transform.position );
-			SwitchLevel( currLevId );
 		}
-		else if( Input.GetButtonDown('NextLevel') ) {
-			SwitchLevel( (currLevId+1)%levels.Count );
+	}
+	else if( gamestate == 'fadingOut' ) {
+		alpha = Mathf.Clamp( (Time.time-fadeStart) / fadeOutTime, 0.0, 1.0 );
+		SetFadeAmount( 1-alpha );
+
+		if( alpha >= 1.0 ) {
+			// done fading
+			gamestate = 'fadedOut';
 		}
-		else if( Input.GetButtonDown('PrevLevel') ) {
-			SwitchLevel( (levels.Count+currLevId-1)%levels.Count );
-		}
-		else if( isReflecting )
+	}
+	else if( gamestate == 'fadedOut' ) {
+		// do the actual level switch
+		SwitchLevel( goalLevId );
+
+		// and fade in, but game is playable now
+		fadeStart = Time.time;
+		gamestate = 'playing';
+	}
+	else if( gamestate == 'playing' ) {
+		// fade in initially - just keep updating this
+		alpha = Mathf.Clamp( (Time.time-fadeStart) / fadeInTime, 0.0, 1.0 );
+		SetFadeAmount( alpha );
+
+		if( currLevGeo != null )
 		{
-			//----------------------------------------
-			//  Update visuals
-			//----------------------------------------
-			if( mirrorPosIcon != null ) {
-				mirrorPosIcon.enabled = true;
-				mirrorPosIcon.transform.position = lineStart;
-			}
+			//currLevGeo.DebugDraw( Color.blue, 0.0 );
 
-			helpText.text = 'Left Click - Confirm\nSpace Bar - Cancel';
-			// draw the reflected shape
-			var newShape = currLevGeo.Duplicate();
-			UpdateReflectionLine();
-			newShape.Reflect( lineStart, lineEnd, false );
-
-			//Debug.Log('shape has '+newShape.GetNumVertices()+' verts, ' + newShape.GetNumEdges()+ ' edges');
-			//newShape.DebugDraw( Color.yellow, 0.0 );
-			//Debug.DrawLine( lineStart, lineEnd, Color.red, 0.0 );
-
-			if( debugDrawPolygonOutline ) {
-				newShape.DebugDraw( debugColor, debugSecs );
-			}
-
-			if( previewTriRender != null ) {
-				ProGeo.TriangulateSimplePolygon( newShape, previewTriRender.mesh, false );
-				SetNormalsAtCamera( previewTriRender.mesh );
-				previewTriRender.gameObject.GetComponent(Renderer).enabled = true;
-
-				// debug output all verts..
-				if( Input.GetButtonDown('DebugReset') && debugHost != null ) {
-					debugHost.Reset( newShape, false );
-				}
-			}
-
-			// we done?
-			if( Input.GetButtonDown('ReflectToggle') )
+			if( Input.GetButtonDown('Reset') )
 			{
-				// confirmed
-				AudioSource.PlayClipAtPoint( confirmReflectSnd, hostcam.transform.position );
+				AudioSource.PlayClipAtPoint( restartSnd, hostcam.transform.position );
+				FadeToLevel( currLevId );
+				previewTriRender.gameObject.GetComponent(Renderer).enabled = false;
+			}
+			else if( Input.GetButtonDown('NextLevel') ) {
+				FadeToLevel( (currLevId+1)%levels.Count );
+				previewTriRender.gameObject.GetComponent(Renderer).enabled = false;
+			}
+			else if( Input.GetButtonDown('PrevLevel') ) {
+				FadeToLevel( (levels.Count+currLevId-1)%levels.Count );
+				previewTriRender.gameObject.GetComponent(Renderer).enabled = false;
+			}
+			else if( isReflecting )
+			{
+				//----------------------------------------
+				//  Update visuals
+				//----------------------------------------
+				if( mirrorPosIcon != null ) {
+					mirrorPosIcon.enabled = true;
+					mirrorPosIcon.transform.position = lineStart;
+				}
 
-				// use new shape
-				currLevGeo = newShape;
-				UpdateCollisionMesh();
-				isReflecting = false;
-				player.GetComponent(PlayerControl).inputEnabled = true;
-				numReflections++;
+				helpText.text = 'Q E - Rotate\nClick - Confirm\nSpace - Cancel';
+				// draw the reflected shape
+				var newShape = currLevGeo.Duplicate();
+				UpdateReflectionLine();
+				newShape.Reflect( lineStart, lineEnd, false );
 
-				// update rendered mesh
-				if( geoTriRender != null ) {
-					ProGeo.TriangulateSimplePolygon( currLevGeo, geoTriRender.mesh, false );
-					SetNormalsAtCamera( geoTriRender.mesh );
+				//Debug.Log('shape has '+newShape.GetNumVertices()+' verts, ' + newShape.GetNumEdges()+ ' edges');
+				//newShape.DebugDraw( Color.yellow, 0.0 );
+				//Debug.DrawLine( lineStart, lineEnd, Color.red, 0.0 );
+
+				if( debugDrawPolygonOutline ) {
+					newShape.DebugDraw( debugColor, debugSecs );
 				}
 
 				if( previewTriRender != null ) {
-					// hide new-geo host
-					previewTriRender.gameObject.GetComponent(Renderer).enabled = false;
-				}
-			}
-			else if( Input.GetButtonDown('Cancel'))
-			{
-				AudioSource.PlayClipAtPoint( cancelReflectSnd, hostcam.transform.position );
-				isReflecting = false;
-				player.GetComponent(PlayerControl).inputEnabled = true;
-				if( previewTriRender != null ) {
-					// hide new-geo host
-					previewTriRender.gameObject.GetComponent(Renderer).enabled = false;
-				}
-			}
-		}
-		else {
-			if( mirrorPosIcon != null )
-				mirrorPosIcon.enabled = false;
+					ProGeo.TriangulateSimplePolygon( newShape, previewTriRender.mesh, false );
+					SetNormalsAtCamera( previewTriRender.mesh );
+					previewTriRender.gameObject.GetComponent(Renderer).enabled = true;
 
-			if( GetLevel().maxReflections > 0 )
-				helpText.text = numReflections + ' / ' + GetLevel().maxReflections;
-			else
-				helpText.text = '';
-
-			if( Input.GetButtonDown('ReflectToggle') )
-			{
-				if( numReflections >= GetLevel().maxReflections && !debugUnlimited )
-				{
-					// no more allowed
-					AudioSource.PlayClipAtPoint( maxedReflectionsSnd, hostcam.transform.position );
+					// debug output all verts..
+					if( Input.GetButtonDown('DebugReset') && debugHost != null ) {
+						debugHost.Reset( newShape, false );
+					}
 				}
-				else
+
+				// we done?
+				if( Input.GetButtonDown('ReflectToggle') )
 				{
-					// start drag
-					AudioSource.PlayClipAtPoint( startReflectSnd, hostcam.transform.position );
-					lineStart = GetMouseXYWorldPos();
-					isReflecting = true;
-					mirrorAngle = Mathf.PI / 2;
-					goalMirrorAngle = Mathf.PI / 2;
-					if( !canMoveWhileReflecting ) {
-						player.GetComponent(PlayerControl).inputEnabled = false;
+					// confirmed
+					AudioSource.PlayClipAtPoint( confirmReflectSnd, hostcam.transform.position );
+
+					// use new shape
+					currLevGeo = newShape;
+					UpdateCollisionMesh();
+					isReflecting = false;
+					player.GetComponent(PlayerControl).inputEnabled = true;
+					numReflections++;
+
+					// update rendered mesh
+					if( geoTriRender != null ) {
+						ProGeo.TriangulateSimplePolygon( currLevGeo, geoTriRender.mesh, false );
+						SetNormalsAtCamera( geoTriRender.mesh );
+					}
+
+					if( previewTriRender != null ) {
+						// hide new-geo host
+						previewTriRender.gameObject.GetComponent(Renderer).enabled = false;
+					}
+				}
+				else if( Input.GetButtonDown('Cancel'))
+				{
+					AudioSource.PlayClipAtPoint( cancelReflectSnd, hostcam.transform.position );
+					isReflecting = false;
+					player.GetComponent(PlayerControl).inputEnabled = true;
+					if( previewTriRender != null ) {
+						// hide new-geo host
+						previewTriRender.gameObject.GetComponent(Renderer).enabled = false;
 					}
 				}
 			}
-		}
+			else {
+				if( mirrorPosIcon != null )
+					mirrorPosIcon.enabled = false;
 
+				if( GetLevel().maxReflections > 0 ) {
+					helpText.text = 'Click - Reflect';
+					helpText.text += '\n' + numReflections + ' / ' + GetLevel().maxReflections;
+				} else
+					helpText.text = 'W A D - jump, move';
+
+				if( Input.GetButtonDown('ReflectToggle') )
+				{
+					if( numReflections >= GetLevel().maxReflections && !debugUnlimited )
+					{
+						// no more allowed
+						AudioSource.PlayClipAtPoint( maxedReflectionsSnd, hostcam.transform.position );
+					}
+					else
+					{
+						// start drag
+						AudioSource.PlayClipAtPoint( startReflectSnd, hostcam.transform.position );
+						lineStart = GetMouseXYWorldPos();
+						isReflecting = true;
+						mirrorAngle = Mathf.PI / 2;
+						goalMirrorAngle = Mathf.PI / 2;
+						if( !canMoveWhileReflecting ) {
+							player.GetComponent(PlayerControl).inputEnabled = false;
+						}
+					}
+				}
+			}
+
+		}
 	}
 }
