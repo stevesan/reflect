@@ -15,6 +15,7 @@ private var mirrorAngleSpeed = 2*Mathf.PI;
 var helpText : GUIText;
 var levelNumber : GUIText;
 var titleText : GUIText;
+
 var player : GameObject;
 var playerFader : Tk2dAnimSpriteFade;
 var goal : GameObject;
@@ -22,15 +23,20 @@ var keyPrefab : GameObject;
 var ballKeyPrefab : GameObject;
 var background : GameObject;
 
-// the current collision geometry polygon will be triangulated into this object
+//----------------------------------------
+//  Objects for level geometry/UI
+//----------------------------------------
 var geoTriRender : MeshFilter;
 var rockCollider : DynamicMeshCollider;
 var rockRender : MeshFilter;
-// shows a preview of the reflected geometry
 var previewTriRender : MeshFilter;
 var debugHost:DebugTriangulate = null;
 
 var mirrorPosIcon : Renderer;
+
+//----------------------------------------
+//  Fading state
+//----------------------------------------
 var mainLight : Light;
 var fadeOutTime = 0.5;
 var fadeInTime = 0.1;
@@ -56,6 +62,12 @@ var maxedReflectionsSnd: AudioClip;
 var rotateSnd : AudioClip;
 
 //----------------------------------------
+//  Particle FX
+//----------------------------------------
+var goalGetFx : ParticleSystem;
+var keyGetFx : ParticleSystem;
+
+//----------------------------------------
 //  Debug
 //----------------------------------------
 var debugColor = Color.red;
@@ -64,13 +76,20 @@ var debugUnlimited = false;
 var debugDrawPolygonOutline = false;
 
 //----------------------------------------
-//  Game state
+//  Per-session state
 //----------------------------------------
 private var levels : List.<LevelInfo> = null;
 private var currLevId : int = 0;
 private var goalLevId : int = 0;
-private var currLevGeo : Polygon2D = null;
+private var currLevPoly : Polygon2D = null;
 private var gamestate:String;
+
+//----------------------------------------
+//  Per-level state
+//----------------------------------------
+private var numKeysGot = 0;
+private var numKeys = 0;
+private var objectInsts = new Array();
 
 //----------------------------------------
 //  Reflection UI state
@@ -81,9 +100,6 @@ private var lineStart = Vector2(0,0);
 private var lineEnd = Vector2(0,0);
 private var mirrorAngle = 0.0;
 private var goalMirrorAngle = 0.0;
-private var numKeysGot = 0;
-private var numKeys = 0;
-private var objectInsts = new Array();
 
 function GetLevel() : LevelInfo { return levels[currLevId]; }
 
@@ -95,9 +111,13 @@ function OnGetGoal()
 {
 	if( gamestate == 'playing' ) {
 		if( numKeysGot == numKeys ) {
-			// got all required keys, touched unlocked goal - yay
-			AudioSource.PlayClipAtPoint( goalGetSound, hostcam.transform.position );
 			FadeToLevel( (currLevId+1) % levels.Count );
+			goal.GetComponent(Star).SetShown( false );
+
+			// fireworks
+			AudioSource.PlayClipAtPoint( goalGetSound, hostcam.transform.position );
+			goalGetFx.transform.position = goal.transform.position;
+			goalGetFx.Play();
 		}
 		else
 		{
@@ -132,9 +152,12 @@ function OnGetKey( keyObj:GameObject )
 {
 	numKeysGot++;
 	Debug.Log('got '+numKeysGot+' keys');
-	AudioSource.PlayClipAtPoint( keyGetSound, hostcam.transform.position );
 	Destroy(keyObj);
 	UpdateGoalLocked();
+
+	AudioSource.PlayClipAtPoint( keyGetSound, hostcam.transform.position );
+	keyGetFx.transform.position = keyObj.transform.position;
+	keyGetFx.Play();
 }
 
 function SwitchLevel( id:int )
@@ -146,12 +169,12 @@ function SwitchLevel( id:int )
 	numReflections = 0;
 	currLevId = id;
 
-	currLevGeo = levels[id].geo.Duplicate();
+	currLevPoly = levels[id].geo.Duplicate();
 	UpdateCollisionMesh();
 
 	// draw the triangulated mesh
 	if( geoTriRender != null ) {
-		ProGeo.TriangulateSimplePolygon( currLevGeo, geoTriRender.mesh, false );
+		ProGeo.TriangulateSimplePolygon( currLevPoly, geoTriRender.mesh, false );
 		SetNormalsAtCamera( geoTriRender.mesh );
 	}
 
@@ -175,6 +198,7 @@ function SwitchLevel( id:int )
 	player.transform.position = levels[id].playerPos;
 	player.GetComponent(PlayerControl).Reset();
 	goal.transform.position = levels[id].goalPos;
+	goal.GetComponent(Star).SetShown( true );
 
 	// move the background to the area's center
 	background.transform.position = levels[id].areaCenter;
@@ -217,7 +241,7 @@ function SwitchLevel( id:int )
 		Debug.Log('spawned '+lobj.type+' at '+lobj.pos);
 	}
 
-	// update goal state
+	// update goal locked state
 	UpdateGoalLocked();
 
 	// put up correct status text
@@ -256,7 +280,7 @@ function Start()
 function UpdateCollisionMesh()
 {
 	ProGeo.BuildBeltMesh(
-			currLevGeo.pts, currLevGeo.edgeA, currLevGeo.edgeB,
+			currLevPoly.pts, currLevPoly.edgeA, currLevPoly.edgeB,
 			-10, 10, false, GetComponent(MeshFilter).mesh );
 	GetComponent(DynamicMeshCollider).OnMeshChanged();
 }
@@ -291,15 +315,6 @@ function UpdateReflectionLine() : void
 {
 	lineStart = GetMouseXYWorldPos();
 
-	// update angle?
-	if( Input.GetButtonDown('RotateMirrorCW') ) {
-		goalMirrorAngle -= Mathf.PI/4;
-		AudioSource.PlayClipAtPoint( rotateSnd, hostcam.transform.position );
-	}
-	else if( Input.GetButtonDown('RotateMirrorCCW') ) {
-		goalMirrorAngle += Mathf.PI/4;
-		AudioSource.PlayClipAtPoint( rotateSnd, hostcam.transform.position );
-	}
 	//if( goalMirrorAngle < 0 ) goalMirrorAngle += Mathf.PI;
 	//if( goalMirrorAngle >= Mathf.PI ) goalMirrorAngle -= Mathf.PI;
 	UpdateMirrorAngle();
@@ -356,9 +371,9 @@ function Update()
 		alpha = Mathf.Clamp( (Time.time-fadeStart) / fadeInTime, 0.0, 1.0 );
 		SetFadeAmount( alpha );
 
-		if( currLevGeo != null )
+		if( currLevPoly != null )
 		{
-			//currLevGeo.DebugDraw( Color.blue, 0.0 );
+			//currLevPoly.DebugDraw( Color.blue, 0.0 );
 
 			if( Input.GetButtonDown('Reset') )
 			{
@@ -385,8 +400,23 @@ function Update()
 				}
 
 				helpText.text = 'Q E - Rotate\nClick - Confirm\nSpace - Cancel';
-				// draw the reflected shape
-				var newShape = currLevGeo.Duplicate();
+
+				//----------------------------------------
+				//  Check for rotation input
+				//----------------------------------------
+				if( Input.GetButtonDown('RotateMirrorCW') ) {
+					goalMirrorAngle -= Mathf.PI/4;
+					AudioSource.PlayClipAtPoint( rotateSnd, hostcam.transform.position );
+				}
+				else if( Input.GetButtonDown('RotateMirrorCCW') ) {
+					goalMirrorAngle += Mathf.PI/4;
+					AudioSource.PlayClipAtPoint( rotateSnd, hostcam.transform.position );
+				}
+
+				//----------------------------------------
+				//  Animate and draw preview
+				//----------------------------------------
+				var newShape = currLevPoly.Duplicate();
 				UpdateReflectionLine();
 				newShape.Reflect( lineStart, lineEnd, false );
 
@@ -415,8 +445,15 @@ function Update()
 					// confirmed
 					AudioSource.PlayClipAtPoint( confirmReflectSnd, hostcam.transform.position );
 
+					// IMPORTANT: make sure we snap to the 45-degree increments.
+					// Otherwise, it's possible for us the commit the in-motion shape..
+					mirrorAngle = goalMirrorAngle;
+					newShape = currLevPoly.Duplicate();
+					UpdateReflectionLine();
+					newShape.Reflect( lineStart, lineEnd, false );
+
 					// use new shape
-					currLevGeo = newShape;
+					currLevPoly = newShape;
 					UpdateCollisionMesh();
 					isReflecting = false;
 					player.GetComponent(PlayerControl).inputEnabled = true;
@@ -424,7 +461,7 @@ function Update()
 
 					// update rendered mesh
 					if( geoTriRender != null ) {
-						ProGeo.TriangulateSimplePolygon( currLevGeo, geoTriRender.mesh, false );
+						ProGeo.TriangulateSimplePolygon( currLevPoly, geoTriRender.mesh, false );
 						SetNormalsAtCamera( geoTriRender.mesh );
 					}
 

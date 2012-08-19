@@ -1,14 +1,19 @@
 
-PLAYTEST: 
-- do a fade-to-black between levels
+need level for jumping over pit
+CUT M9.. it's already a 2x later
+M10, make 2x?
+CUT M11? same idea as M3 really
+
+- consider just offering various "moments of reflection" when each puzzle is solved! just like..quotes.
 - look at how Sworcery does its "worship mode". When in mirror mode, we should have a low hum noise in the BG, it should shimmer when the mouse moves, light should emit from the edge, etc.
-- stripes across mirror
+- stripes across mirror?
 - sijie's mockup graphics, with the outlines, etc.
+		and the notebook elements
+		bring over StrokeGeometry from BJR
 - reflect effects: try some "looks" in photoshop..
 		current geo "behind" mirror (ie. in the reflected side) should be in dotted outline?
 - for SJ:
-	animate carrot/keys
-	light scenery on bottom, like hills/flowers
+		animate carrot/keys
 - when y velocity is negative, switch to "falling" anim with ears down
 - add per-level tutorial/story text
 - polish stuff to try:

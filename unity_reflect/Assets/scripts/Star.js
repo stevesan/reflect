@@ -2,6 +2,7 @@
 @script RequireComponent( Collider )
 
 var lockSprite:Renderer;
+var starSprite:Renderer;
 
 function Start () {
 
@@ -9,6 +10,10 @@ function Start () {
 
 function Update () {
 
+}
+
+function SetShown( shown:boolean ) {
+	starSprite.enabled = shown;
 }
 
 function SetLocked( locked:boolean )
