@@ -37,11 +37,11 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="4"
-     inkscape:cx="628.22106"
-     inkscape:cy="-539.70495"
+     inkscape:zoom="1"
+     inkscape:cx="370.37417"
+     inkscape:cy="-224.10096"
      inkscape:document-units="px"
-     inkscape:current-layer="layer2"
+     inkscape:current-layer="layer1"
      showgrid="true"
      inkscape:window-width="1276"
      inkscape:window-height="756"
@@ -69,7 +69,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -81,7 +81,7 @@
        maxReflections="1"
        gameObjType="levelArea"
        y="320"
-       x="240"
+       x="360"
        height="99.999977"
        width="99.999977"
        id="rect3310"
@@ -408,7 +408,7 @@
        inkscape:connector-curvature="0"
        gameObjType="levelGeo"
        id="path3312"
-       d="m 250,350 80,0 0,40 -80,0 z"
+       d="m 370,350 80,0 0,40 -80,0 z"
        style="fill:#ffffff;fill-opacity:1;stroke:none"
        sodipodi:nodetypes="ccccc" />
     <rect
@@ -877,23 +877,23 @@
        gameObjType="levelArea" />
     <path
        style="fill:#ffffff;fill-opacity:1;stroke:none"
-       d="m 630,680 10,0 0,10 10,0 0,10 10,0 0,10 10,0 0,40 -40,0 z"
+       d="m 620,690 10,0 0,10 10,0 0,10 10,0 0,10 10,0 0,40 -40,0 z"
        id="path3738"
        gameObjType="levelGeo"
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="ccccccccccc" />
     <rect
-       maxReflections="2"
+       maxReflections="1"
        style="fill:#000000;fill-opacity:1;stroke:none"
        id="rect4034"
        width="100.00001"
        height="99.999977"
-       x="720"
-       y="200"
+       x="240"
+       y="320"
        gameObjType="levelArea" />
     <path
        style="fill:#ffffff;fill-opacity:1;stroke:none"
-       d="m 740,220 40,0 0,60 -20,0 0,-40 -20,0 z"
+       d="m 260,340 40,0 0,60 -20,0 0,-40 -20,0 z"
        id="path4036"
        gameObjType="levelGeo"
        inkscape:connector-curvature="0"
@@ -1245,14 +1245,14 @@
        style="fill:#ffff00;fill-opacity:1;stroke:none"
        id="rect3314"
        height="10"
-       x="285"
+       x="405"
        y="355"
        width="10" />
     <rect
        gameObjType="player"
        width="10"
        y="380"
-       x="285"
+       x="405"
        height="10"
        id="rect3316"
        style="fill:#00ff00;fill-opacity:1;stroke:none" />
@@ -1453,15 +1453,15 @@
        style="fill:#ffff00;fill-opacity:1;stroke:none"
        id="rect3740"
        height="10"
-       x="690"
-       y="740"
+       x="680"
+       y="750"
        width="10" />
     <rect
        style="fill:#00ff00;fill-opacity:1;stroke:none"
        id="rect3742"
        height="10"
-       x="640"
-       y="740"
+       x="630"
+       y="750"
        width="10"
        gameObjType="player" />
     <rect
@@ -1469,23 +1469,23 @@
        style="fill:#00a3ff;fill-opacity:1;stroke:none"
        id="rect3756"
        height="10"
-       x="630"
-       y="680"
+       x="620"
+       y="690"
        width="10" />
     <rect
        gameObjType="goal"
        style="fill:#ffff00;fill-opacity:1;stroke:none"
        id="rect4038"
        height="10"
-       x="805"
-       y="230"
+       x="325"
+       y="350"
        width="10" />
     <rect
        style="fill:#00ff00;fill-opacity:1;stroke:none"
        id="rect4040"
        height="10"
-       x="740"
-       y="230"
+       x="260"
+       y="350"
        width="10"
        gameObjType="player" />
   </g>

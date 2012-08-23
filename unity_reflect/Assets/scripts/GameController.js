@@ -34,6 +34,9 @@ var debugHost:DebugTriangulate = null;
 
 var mirrorPosIcon : Renderer;
 
+var outlineMesh : MeshFilter;
+private var outlineBuffer = new MeshBuffer();
+
 //----------------------------------------
 //  Fading state
 //----------------------------------------
@@ -160,6 +163,39 @@ function OnGetKey( keyObj:GameObject )
 	keyGetFx.Play();
 }
 
+function PolyToStroke( poly:Polygon2D, vmax:float, width:float, buffer:MeshBuffer, mesh:Mesh )
+{
+	var npts = poly.pts.length;
+	buffer.Allocate( 2*npts, 2*(npts-1) );
+	var texVs = new float[npts];
+	for( var i = 0; i < npts; i++ ) {
+		texVs[i] = (i*1.0)/(npts-1.0) * vmax;
+		Debug.Log(texVs[i]+'');
+	}
+	ProGeo.Stroke2D( poly.pts, texVs, 0, npts-1, width, buffer, 0, 0 );
+	buffer.CopyToMesh( mesh );
+	mesh.RecalculateBounds();
+}
+
+function OnCollidingGeometryChanged()
+{
+	// update collision mesh
+	ProGeo.BuildBeltMesh(
+			currLevPoly.pts, currLevPoly.edgeA, currLevPoly.edgeB,
+			-10, 10, false, GetComponent(MeshFilter).mesh );
+	GetComponent(DynamicMeshCollider).OnMeshChanged();
+
+	// update rendered mesh
+	if( geoTriRender != null ) {
+		ProGeo.TriangulateSimplePolygon( currLevPoly, geoTriRender.mesh, false );
+		SetNormalsAtCamera( geoTriRender.mesh );
+
+		// update the outline
+		PolyToStroke( currLevPoly, 1.0, 0.5, outlineBuffer, outlineMesh.mesh );
+		SetNormalsAtCamera( outlineMesh.mesh );
+	}
+}
+
 function SwitchLevel( id:int )
 {
 	Debug.Log('switching to level '+id);
@@ -170,13 +206,7 @@ function SwitchLevel( id:int )
 	currLevId = id;
 
 	currLevPoly = levels[id].geo.Duplicate();
-	UpdateCollisionMesh();
-
-	// draw the triangulated mesh
-	if( geoTriRender != null ) {
-		ProGeo.TriangulateSimplePolygon( currLevPoly, geoTriRender.mesh, false );
-		SetNormalsAtCamera( geoTriRender.mesh );
-	}
+	OnCollidingGeometryChanged();
 
 	// update rocks collider
 	if( levels[id].rockGeo.pts != null ) {
@@ -196,6 +226,7 @@ function SwitchLevel( id:int )
 
 	// position the player
 	player.transform.position = levels[id].playerPos;
+	player.GetComponent(Rigidbody).velocity = Vector3(0,0,0);
 	player.GetComponent(PlayerControl).Reset();
 	goal.transform.position = levels[id].goalPos;
 	goal.GetComponent(Star).SetShown( true );
@@ -279,10 +310,6 @@ function Start()
 
 function UpdateCollisionMesh()
 {
-	ProGeo.BuildBeltMesh(
-			currLevPoly.pts, currLevPoly.edgeA, currLevPoly.edgeB,
-			-10, 10, false, GetComponent(MeshFilter).mesh );
-	GetComponent(DynamicMeshCollider).OnMeshChanged();
 }
 
 function SetNormalsAtCamera( mesh:Mesh )
@@ -454,21 +481,17 @@ function Update()
 
 					// use new shape
 					currLevPoly = newShape;
-					UpdateCollisionMesh();
-					isReflecting = false;
-					player.GetComponent(PlayerControl).inputEnabled = true;
-					numReflections++;
-
-					// update rendered mesh
-					if( geoTriRender != null ) {
-						ProGeo.TriangulateSimplePolygon( currLevPoly, geoTriRender.mesh, false );
-						SetNormalsAtCamera( geoTriRender.mesh );
-					}
+					OnCollidingGeometryChanged();
 
 					if( previewTriRender != null ) {
-						// hide new-geo host
+						// hide preview
 						previewTriRender.gameObject.GetComponent(Renderer).enabled = false;
 					}
+
+					// update state
+					player.GetComponent(PlayerControl).inputEnabled = true;
+					numReflections++;
+					isReflecting = false;
 				}
 				else if( Input.GetButtonDown('Cancel'))
 				{
