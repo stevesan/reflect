@@ -35,6 +35,7 @@ var debugHost:DebugTriangulate = null;
 var mirrorPosIcon : Renderer;
 
 var outlineMesh : MeshFilter;
+var outlineWidth  = 0.5;
 private var outlineBuffer = new MeshBuffer();
 
 //----------------------------------------
@@ -195,16 +196,13 @@ function PolysToStroke( polys:Mesh2D, vmax:float, width:float, buffer:MeshBuffer
 		loop.Reverse();
 
 		// get the points of the edge loop to use as control points
-		var nControls = loop.Count+1;
+		var nControls = loop.Count;
 		var loopPts = new Vector2[ nControls ];
 		for( loopEid = 0; loopEid < loop.Count; loopEid++ ) {
 			var polysEid = loop[ loopEid ];
-			var polysPid = polys.edgeA[ polysEid ];
-			loopPts[loopEid] = polys.pts[ polysPid ];
+			var startPid = polys.edgeA[ polysEid ];
+			loopPts[loopEid] = polys.pts[ startPid ];
 		}
-
-		// close the loop
-		loopPts[ nControls-1 ] = loopPts[0];
 
 		// compute simple lerp'd V coordinates
 		var texVs = new float[nControls];
@@ -212,14 +210,14 @@ function PolysToStroke( polys:Mesh2D, vmax:float, width:float, buffer:MeshBuffer
 			texVs[i] = (i*1.0)/(nControls-1.0) * vmax;
 		}
 
-		ProGeo.Stroke2D( loopPts, texVs, 0, nControls-1, width, buffer,
+		ProGeo.Stroke2D( loopPts, texVs, 0, nControls-1,
+				true,
+				width, buffer,
 				nextFreeVert, nextFreeTri );
-		// update
-		
-		nextFreeVert += 2*nControls;
-		nextFreeTri += 2*(nControls-1);
 
-		Debug.Log('nfv = '+nextFreeVert);
+		// update
+		nextFreeVert += 2*nControls;
+		nextFreeTri += 2*nControls;
 	}
 
 	// update mesh
@@ -241,7 +239,7 @@ function OnCollidingGeometryChanged()
 		SetNormalsAtCamera( geoTriRender.mesh );
 
 		// update the outline
-		PolysToStroke( currLevPoly, 1.0, 0.5, outlineBuffer, outlineMesh.mesh );
+		PolysToStroke( currLevPoly, 1.0, outlineWidth, outlineBuffer, outlineMesh.mesh );
 		SetNormalsAtCamera( outlineMesh.mesh );
 	}
 }
