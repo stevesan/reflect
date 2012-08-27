@@ -1,9 +1,8 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/scripts/UnityUtils/ProGeo.js">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/scripts/GameController.js">
     <Files>
       <File FileName="Assets/scripts/UnityUtils/ProGeo.js" Line="1" Column="1" />
-      <File FileName="Assets/DebugTriangulate.js" Line="1" Column="1" />
       <File FileName="Assets/scripts/GameController.js" Line="1" Column="1" />
     </Files>
   </MonoDevelop.Ide.Workbench>
@@ -12,7 +11,7 @@
       <Breakpoint enabled="false" file="/Users/stevesan84/reflect/unity_reflect/Assets/scripts/Utils/ProGeo.js" line="194" />
       <Breakpoint enabled="false" file="/Users/stevesan84/reflect/unity_reflect/Assets/scripts/Utils/ProGeo.js" line="215" />
       <Breakpoint enabled="false" file="/Users/stevesan84/reflect_git/unity_reflect/Assets/scripts/TestReflect.js" line="32" />
-      <Breakpoint file="/Users/stevesan84/reflect_git/unity_reflect/Assets/scripts/UnityUtils/ProGeo.js" line="585" />
+      <Breakpoint file="/Users/stevesan84/reflect_git/unity_reflect/Assets/scripts/UnityUtils/ProGeo.js" line="604" />
     </BreakpointStore>
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
   <MonoDevelop.Ide.DebuggingService.PinnedWatches />
