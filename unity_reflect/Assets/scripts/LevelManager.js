@@ -19,11 +19,11 @@ class LevelObject
 //----------------------------------------
 class LevelInfo
 {
-	var geo = new Polygon2D();
+	var geo = new Mesh2D();
 	var playerPos:Vector2;
 	var goalPos:Vector2;
 	var objects = new List.<LevelObject>();
-	var rockGeo = new Polygon2D();	// rocks - ie. colliders that are immune to reflection
+	var rockGeo = new Mesh2D();	// rocks - ie. colliders that are immune to reflection
 
 	var areaCenter:Vector2;	// used to position the camera
 	var origAreaCenter:Vector2;	// used to order the levels based on their position in the SVG sheet
@@ -62,7 +62,7 @@ static function ParseRectCenter( parts:String[] ) : Vector2
 	return rect.center;
 }
 
-static function ReadPolygon2D( parts:String[], reader:StringReader ) : Polygon2D
+static function ReadSvgToMesh2D( parts:String[], reader:StringReader ) : Mesh2D
 {
 	// read in SVG commands, and use the SVG builder
 	var numCmds = parseInt( parts[1] );
@@ -73,7 +73,7 @@ static function ReadPolygon2D( parts:String[], reader:StringReader ) : Polygon2D
 	builder.EndBuilding();
 
 	// convert svg into polygon2D
-	var poly = new Polygon2D();
+	var poly = new Mesh2D();
 
 	// we can assume that all level paths are closed polygons
 	// so get all but the last point
@@ -109,8 +109,8 @@ static function ParseLevels( reader:StringReader ) : List.<LevelInfo>
 	var players = new List.<Rect>();
 	var goals = new List.<Vector2>();
 	var objects = new List.<LevelObject>();
-	var geos = new List.<Polygon2D>();
-	var rockGeos = new List.<Polygon2D>();
+	var geos = new List.<Mesh2D>();
+	var rockGeos = new List.<Mesh2D>();
 
 	var line = reader.ReadLine();
 	while( line != null )
@@ -126,9 +126,9 @@ static function ParseLevels( reader:StringReader ) : List.<LevelInfo>
 		else if( parts[0] == 'goal' )
 			goals.Add( ParseRectCenter( parts ) );
 		else if( parts[0] == 'levelGeo' )
-			geos.Add( ReadPolygon2D(parts, reader) );
+			geos.Add( ReadSvgToMesh2D(parts, reader) );
 		else if( parts[0] == 'rockGeo' )
-			rockGeos.Add( ReadPolygon2D(parts, reader) );
+			rockGeos.Add( ReadSvgToMesh2D(parts, reader) );
 		else {
 			// some other object type, like a key
 			var obj = new LevelObject();

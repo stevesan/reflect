@@ -26,10 +26,10 @@ var background : GameObject;
 //----------------------------------------
 //  Objects for level geometry/UI
 //----------------------------------------
-var geoTriRender : MeshFilter;
+var geoTriRender : MeshFilter;	// rendering the fill-triangles for the active collision geometry
 var rockCollider : DynamicMeshCollider;
 var rockRender : MeshFilter;
-var previewTriRender : MeshFilter;
+var previewTriRender : MeshFilter;	// rendering the fill-triangles of the preview
 var debugHost:DebugTriangulate = null;
 
 var mirrorPosIcon : Renderer;
@@ -84,7 +84,7 @@ var debugDrawPolygonOutline = false;
 private var levels : List.<LevelInfo> = null;
 private var currLevId : int = 0;
 private var goalLevId : int = 0;
-private var currLevPoly : Polygon2D = null;
+private var currLevPoly : Mesh2D = null;
 private var gamestate:String;
 
 //----------------------------------------
@@ -163,16 +163,66 @@ function OnGetKey( keyObj:GameObject )
 	keyGetFx.Play();
 }
 
-function PolyToStroke( poly:Polygon2D, vmax:float, width:float, buffer:MeshBuffer, mesh:Mesh )
+function PolysToStroke( polys:Mesh2D, vmax:float, width:float, buffer:MeshBuffer, mesh:Mesh )
 {
-	var npts = poly.pts.length;
-	buffer.Allocate( 2*npts, 2*(npts-1) );
-	var texVs = new float[npts];
-	for( var i = 0; i < npts; i++ ) {
-		texVs[i] = (i*1.0)/(npts-1.0) * vmax;
-		Debug.Log(texVs[i]+'');
+	var edgeVisited = new boolean[ polys.GetNumEdges() ];
+	for( var eid = 0; eid < edgeVisited.length; eid++ ) {
+		edgeVisited[ eid ] = false;
 	}
-	ProGeo.Stroke2D( poly.pts, texVs, 0, npts-1, width, buffer, 0, 0 );
+
+	// TODO - we're being pretty damn conservative with the number of vertices the final mesh may need..
+	buffer.Allocate( 4*polys.GetNumEdges(), 2*polys.GetNumEdges() );
+	var nextFreeVert = 0;
+	var nextFreeTri = 0;
+
+	while( true ) {
+
+		// find an unvisited edge
+		eid = 0;
+		while( eid < edgeVisited.length && edgeVisited[eid] ) eid++;
+		if( eid >= edgeVisited.length ) break;
+
+		// find the loop starting at this edge
+		var loop = polys.GetEdgeLoop( eid );
+
+		// mark all edges in the loop
+		for( var loopEid = 0; loopEid < loop.Count; loopEid++ ) {
+			edgeVisited[ loop[loopEid] ] = true;
+		}
+
+		// stroke out the loop
+		// reverse the loop, just cuz
+		loop.Reverse();
+
+		// get the points of the edge loop to use as control points
+		var nControls = loop.Count+1;
+		var loopPts = new Vector2[ nControls ];
+		for( loopEid = 0; loopEid < loop.Count; loopEid++ ) {
+			var polysEid = loop[ loopEid ];
+			var polysPid = polys.edgeA[ polysEid ];
+			loopPts[loopEid] = polys.pts[ polysPid ];
+		}
+
+		// close the loop
+		loopPts[ nControls-1 ] = loopPts[0];
+
+		// compute simple lerp'd V coordinates
+		var texVs = new float[nControls];
+		for( var i = 0; i < nControls; i++ ) {
+			texVs[i] = (i*1.0)/(nControls-1.0) * vmax;
+		}
+
+		ProGeo.Stroke2D( loopPts, texVs, 0, nControls-1, width, buffer,
+				nextFreeVert, nextFreeTri );
+		// update
+		
+		nextFreeVert += 2*nControls;
+		nextFreeTri += 2*(nControls-1);
+
+		Debug.Log('nfv = '+nextFreeVert);
+	}
+
+	// update mesh
 	buffer.CopyToMesh( mesh );
 	mesh.RecalculateBounds();
 }
@@ -185,13 +235,13 @@ function OnCollidingGeometryChanged()
 			-10, 10, false, GetComponent(MeshFilter).mesh );
 	GetComponent(DynamicMeshCollider).OnMeshChanged();
 
-	// update rendered mesh
+	// update rendered fill mesh
 	if( geoTriRender != null ) {
 		ProGeo.TriangulateSimplePolygon( currLevPoly, geoTriRender.mesh, false );
 		SetNormalsAtCamera( geoTriRender.mesh );
 
 		// update the outline
-		PolyToStroke( currLevPoly, 1.0, 0.5, outlineBuffer, outlineMesh.mesh );
+		PolysToStroke( currLevPoly, 1.0, 0.5, outlineBuffer, outlineMesh.mesh );
 		SetNormalsAtCamera( outlineMesh.mesh );
 	}
 }
