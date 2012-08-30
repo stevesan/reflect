@@ -17,11 +17,12 @@ var levelNumber : GUIText;
 var titleText : GUIText;
 
 var player : GameObject;
-var playerFader : Tk2dAnimSpriteFade;
 var goal : GameObject;
 var keyPrefab : GameObject;
 var ballKeyPrefab : GameObject;
 var background : GameObject;
+
+var spritesToFade : Tk2dAnimSpriteFade[];
 
 //----------------------------------------
 //  Objects for level geometry/UI
@@ -137,7 +138,9 @@ function SetFadeAmount( t:float ) {
 	mainLight.intensity = t * origLightIntensity;
 	levelNumber.GetComponent(GUITextFade).SetFadeAmount(t);
 	helpText.GetComponent(GUITextFade).SetFadeAmount(t);
-	playerFader.SetFadeAmount(t);
+
+	for( fader in spritesToFade )
+		fader.SetFadeAmount(t);
 }
 
 function FadeToLevel( levId:int ) {
