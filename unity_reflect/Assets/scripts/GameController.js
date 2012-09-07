@@ -344,8 +344,8 @@ function SwitchLevel( id:int )
 
 	// put up correct status text
 	levelNumber.text = 'Moment '+(currLevId+1)+ '/'+levels.Count+
-	'\nR - Reset'+
-	'\n[ ] - Prev/Next';
+	'          R - Reset'+
+	'          [ ] - Skip';
 }
 
 function Awake()
