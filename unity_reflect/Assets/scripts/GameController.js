@@ -21,6 +21,7 @@ var goal : GameObject;
 var keyPrefab : GameObject;
 var ballKeyPrefab : GameObject;
 var background : GameObject;
+var safeArea : SafeArea;
 
 var spritesToFade : Tk2dAnimSpriteFade[];
 
@@ -38,6 +39,10 @@ var mirrorPosIcon : Renderer;
 var outlineMesh : MeshFilter;
 var outlineWidth  = 0.5;
 private var outlineBuffer = new MeshBuffer();
+
+var rockOutlineMesh : MeshFilter;
+var rockOutlineWidth = 0.5;
+private var rockOutlineBuffer = new MeshBuffer();
 
 //----------------------------------------
 //  Fading state
@@ -268,11 +273,18 @@ function SwitchLevel( id:int )
 		// update rock render
 		ProGeo.TriangulateSimplePolygon( levels[id].rockGeo, rockRender.mesh, false );
 		SetNormalsAtCamera( rockRender.mesh );
+
+		// update the outline
+		PolysToStroke( levels[id].rockGeo, 1.0, rockOutlineWidth, rockOutlineBuffer, rockOutlineMesh.mesh );
+		SetNormalsAtCamera( rockOutlineMesh.mesh );
 	}
 	else {
 		rockCollider.GetMesh().Clear();
 		rockCollider.OnMeshChanged();
 		rockRender.mesh.Clear();
+
+		// outline
+		rockOutlineMesh.mesh.Clear();
 	}
 
 	// position the player
@@ -285,6 +297,10 @@ function SwitchLevel( id:int )
 	// move the background to the area's center
 	background.transform.position = levels[id].areaCenter;
 	background.transform.position.z = 10;
+
+	// move the safe area
+	safeArea.transform.position = levels[id].areaCenter;
+	safeArea.transform.position.z = player.transform.position.z;
 
 	// move camera to see the level
 	hostcam.transform.position = Utils.ToVector3( levels[id].areaCenter, hostcam.transform.position.z );
@@ -408,6 +424,16 @@ function UpdateReflectionLine() : void
 		lineEnd = lineStart + Vector2( Mathf.Cos(snappedAngle), Mathf.Sin(snappedAngle) );
 	}
 	*/
+}
+
+function OnPlayerFallout() : void
+{
+	if( gamestate == 'playing' ) {
+		// reset
+		AudioSource.PlayClipAtPoint( restartSnd, hostcam.transform.position );
+		FadeToLevel( currLevId );
+		previewTriRender.gameObject.GetComponent(Renderer).enabled = false;
+	}
 }
 
 function Update()
@@ -556,9 +582,8 @@ function Update()
 				}
 			}
 			else {
-				if( mirrorPosIcon != null )
-					mirrorPosIcon.enabled = false;
 
+				// setup HUD text
 				if( GetLevel().maxReflections > 0 ) {
 					helpText.text = 'Click - Reflect';
 					helpText.text += '\n' + numReflections + ' / ' + GetLevel().maxReflections;

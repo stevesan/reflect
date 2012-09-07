@@ -1,27 +1,15 @@
 
-- sijie's mockup graphics, with the outlines, etc.
-		and the notebook elements
-		bring over StrokeGeometry from BJR
+- hide the Cube of the ballkey prefab as well..otherwise it shows up at random places heh
+- more puzzles using bricks/ballkey..
 - clamp cursor icon (hide pointer?) to screen
-- kill area when fall out
 - consider just offering various "moments of reflection" when each puzzle is solved! just like..quotes.
 - look at how Sworcery does its "worship mode". When in mirror mode, we should have a low hum noise in the BG, it should shimmer when the mouse moves, light should emit from the edge, etc.
-- stripes across mirror?
 - reflect effects: try some "looks" in photoshop..
 		current geo "behind" mirror (ie. in the reflected side) should be in dotted outline?
-- for SJ:
-		animate carrot/keys
+- for SJ: animate carrot/keys
 - when y velocity is negative, switch to "falling" anim with ears down
-- add per-level tutorial/story text
-- polish stuff to try:
-	snow flakes, randomly jittered for "wind"
-	scrolling bg over grid
-	lighting shafts, behind and in front
-	anything can move/rotate slowly, alpha-modulate. ie. rotating sun-rays lighting, hori-scrolling clouds
-	slow alpha-modulation
-	light color changes when you get all keys?
-	fx when unlock carrot
-	fx when grab keys, pop bubble key
+- make carrot/keys juicy
+		light color changes when you get all keys? like a quick blink of blue?
 - make level geo double-sided for physics? why not?
 - grid-snapping or mirror location to keep things less fidgety..
 	- although the visual grid bg helps already
