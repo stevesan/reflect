@@ -316,13 +316,17 @@ function SwitchLevel( id:int )
 	for( inst in objectInsts )
 		Destroy(inst);
 	objectInsts.Clear();
-	// always disable the prefab
+
+	// disable the prefabs
 	keyPrefab.active = false;
+	Utils.HideAll( keyPrefab );
 	ballKeyPrefab.active = false;
-	for( lobj in levels[id].objects )
-	{
+	Utils.HideAll( ballKeyPrefab );
+
+	for( lobj in levels[id].objects ) {
 		var obj:GameObject = null;
 
+		// spawn key or ballkey
 		if( lobj.type == 'key' ) {
 			numKeys++;
 			obj = Instantiate( keyPrefab, lobj.pos, keyPrefab.transform.rotation );
@@ -333,8 +337,11 @@ function SwitchLevel( id:int )
 			// make it NOT collide with the player, so it doesn't affect player's motion
 			Physics.IgnoreCollision( obj.GetComponent(Collider), player.GetComponent(Collider) );
 		}
+
+		// setup
 		obj.transform.parent = this.transform;
 		obj.active = true;
+		Utils.ShowAll( obj );
 		objectInsts.Push( obj );
 		Debug.Log('spawned '+lobj.type+' at '+lobj.pos);
 	}
