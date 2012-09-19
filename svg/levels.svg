@@ -37,17 +37,17 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="2.8284271"
-     inkscape:cx="180.35688"
-     inkscape:cy="-876.84291"
+     inkscape:zoom="5.6568542"
+     inkscape:cx="176.65516"
+     inkscape:cy="-879.29898"
      inkscape:document-units="px"
-     inkscape:current-layer="layer1"
+     inkscape:current-layer="layer2"
      showgrid="true"
-     inkscape:window-width="1276"
-     inkscape:window-height="756"
-     inkscape:window-x="4"
-     inkscape:window-y="0"
-     inkscape:window-maximized="0"
+     inkscape:window-width="1920"
+     inkscape:window-height="1018"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
      inkscape:snap-global="true"
      showguides="true"
      inkscape:guide-bbox="true">
@@ -822,7 +822,7 @@
     <path
        sodipodi:nodetypes="ccccc"
        style="fill:#ffffff;fill-opacity:1;stroke:none"
-       d="m 140,1050 70,0 0,80 -70,0 z"
+       d="m 140,1045 70,0 0,75 -70,0 z"
        id="path3367"
        gameObjType="levelGeo"
        inkscape:connector-curvature="0" />
@@ -832,19 +832,19 @@
        id="rect3369"
        height="10"
        x="200"
-       y="1120"
+       y="1110"
        width="10" />
     <rect
        style="fill:#00ff00;fill-opacity:1;stroke:none;display:inline"
        id="rect3371"
        height="10"
        x="150"
-       y="1060"
+       y="1055"
        width="10"
        gameObjType="player" />
     <path
        style="fill:#ae550b;fill-opacity:1;stroke:none"
-       d="m 170,1080 -50,0 0,-10 50,0 z"
+       d="m 170,1070 -50,0 0,-5 50,0 z"
        id="path3373"
        gameObjType="rockGeo"
        inkscape:connector-curvature="0"
@@ -854,7 +854,7 @@
        inkscape:connector-curvature="0"
        gameObjType="rockGeo"
        id="path3377"
-       d="m 220,1080 -40,0 0,-10 40,0 z"
+       d="m 220,1070 -40,0 0,-5 40,0 z"
        style="fill:#ae550b;fill-opacity:1;stroke:none" />
   </g>
   <g
@@ -1380,12 +1380,12 @@
        id="rect3375"
        height="10"
        x="180"
-       y="1120"
+       y="1110"
        width="10" />
     <rect
        width="10"
-       y="1080"
-       x="150"
+       y="1070"
+       x="145"
        height="10"
        id="rect3379"
        style="fill:#00a3ff;fill-opacity:1;stroke:none"
