@@ -22,6 +22,14 @@
   <defs
      id="defs4">
     <linearGradient
+       id="linearGradient5568"
+       osb:paint="solid">
+      <stop
+         style="stop-color:#00c6ff;stop-opacity:1;"
+         offset="0"
+         id="stop5570" />
+    </linearGradient>
+    <linearGradient
        id="linearGradient4006"
        osb:paint="solid">
       <stop
@@ -37,9 +45,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="5.6568542"
-     inkscape:cx="176.65516"
-     inkscape:cy="-879.29898"
+     inkscape:zoom="2"
+     inkscape:cx="250.40435"
+     inkscape:cy="-381.3588"
      inkscape:document-units="px"
      inkscape:current-layer="layer2"
      showgrid="true"
@@ -78,6 +86,15 @@
      inkscape:groupmode="layer"
      id="layer1">
     <rect
+       gameObjType="levelArea"
+       y="200"
+       x="120"
+       height="99.999985"
+       width="100"
+       id="rect4480-1"
+       style="fill:#000000;fill-opacity:1;stroke:none"
+       maxReflections="0" />
+    <rect
        maxReflections="1"
        gameObjType="levelArea"
        y="320"
@@ -94,7 +111,7 @@
        x="0"
        y="680"
        gameObjType="levelArea"
-       maxReflections="2" />
+       maxReflections="0" />
     <rect
        maxReflections="2"
        gameObjType="levelArea"
@@ -130,7 +147,7 @@
        width="100.00001"
        id="rect4451"
        style="fill:#000000;fill-opacity:1;stroke:none"
-       maxReflections="2" />
+       maxReflections="0" />
     <rect
        gameObjType="levelArea"
        y="560"
@@ -139,7 +156,7 @@
        width="100.00001"
        id="rect4327"
        style="fill:#000000;fill-opacity:1;stroke:none"
-       maxReflections="2" />
+       maxReflections="0" />
     <rect
        maxReflections="0"
        style="fill:#000000;fill-opacity:1;stroke:none"
@@ -157,7 +174,7 @@
        width="100"
        id="rect3125"
        style="fill:#000000;fill-opacity:1;stroke:none"
-       maxReflections="1" />
+       maxReflections="0" />
     <rect
        style="fill:#000000;fill-opacity:1;stroke:none"
        id="rect5029"
@@ -193,16 +210,7 @@
        x="240"
        y="560"
        gameObjType="levelArea"
-       maxReflections="1" />
-    <rect
-       style="fill:#000000;fill-opacity:1;stroke:none"
-       id="area0"
-       width="100"
-       height="99.999985"
-       x="120"
-       y="200"
-       gameObjType="levelArea"
-       maxReflections="1" />
+       maxReflections="0" />
     <rect
        gameObjType="levelArea"
        y="200"
@@ -358,7 +366,7 @@
        width="100.00001"
        id="rect3244"
        style="fill:#000000;fill-opacity:1;stroke:none"
-       maxReflections="1" />
+       maxReflections="0" />
     <path
        inkscape:connector-curvature="0"
        gameObjType="levelGeo"
@@ -421,7 +429,7 @@
        id="rect3564"
        style="fill:#00ff00;fill-opacity:1;stroke:none;display:inline" />
     <rect
-       maxReflections="1"
+       maxReflections="0"
        style="fill:#000000;fill-opacity:1;stroke:none"
        id="rect3260"
        width="100.00001"
@@ -451,7 +459,7 @@
        width="100.00001"
        id="rect3270"
        style="fill:#000000;fill-opacity:1;stroke:none"
-       maxReflections="1" />
+       maxReflections="0" />
     <path
        style="fill:#ffffff;fill-opacity:1;stroke:none"
        d="m 330,240 10,0 0,20 -10,0 z"
@@ -481,7 +489,7 @@
        width="100.00001"
        id="rect4204"
        style="fill:#000000;fill-opacity:1;stroke:none"
-       maxReflections="1" />
+       maxReflections="0" />
     <path
        inkscape:connector-curvature="0"
        gameObjType="levelGeo"
@@ -513,39 +521,7 @@
        d="m 40,970 20,0 0,10 -20,0 z"
        style="fill:#ae550b;fill-opacity:1;stroke:none" />
     <rect
-       gameObjType="levelArea"
-       y="920"
-       x="360"
-       height="99.999977"
-       width="100.00001"
-       id="rect4303"
-       style="fill:#000000;fill-opacity:1;stroke:none"
-       maxReflections="2" />
-    <path
-       inkscape:connector-curvature="0"
-       gameObjType="levelGeo"
-       id="path4305"
-       d="m 415,960 10.00001,9.99998 L 400,995 l -10,0 0,-10 z"
-       style="fill:#ffffff;fill-opacity:1;stroke:none"
-       sodipodi:nodetypes="cccccc" />
-    <rect
-       width="10"
-       y="985"
-       x="390"
-       height="10"
-       id="rect4307"
-       style="fill:#ffff00;fill-opacity:1;stroke:none;display:inline"
-       gameObjType="goal" />
-    <rect
-       gameObjType="player"
-       width="10"
-       y="980"
-       x="395"
-       height="10"
-       id="rect4309"
-       style="fill:#00ff00;fill-opacity:1;stroke:none;display:inline" />
-    <rect
-       maxReflections="1"
+       maxReflections="0"
        style="fill:#000000;fill-opacity:1;stroke:none"
        id="rect4351"
        width="100.00001"
@@ -584,7 +560,7 @@
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="ccccc" />
     <rect
-       maxReflections="1"
+       maxReflections="0"
        style="fill:#000000;fill-opacity:1;stroke:none"
        id="rect3324"
        width="100.00001"
@@ -630,7 +606,7 @@
        x="120"
        y="680"
        gameObjType="levelArea"
-       maxReflections="1" />
+       maxReflections="0" />
     <path
        sodipodi:nodetypes="ccccccccc"
        style="fill:#ffffff;fill-opacity:1;stroke:none"
@@ -671,18 +647,18 @@
        gameObjType="levelGeo"
        inkscape:connector-curvature="0" />
     <rect
-       maxReflections="2"
+       maxReflections="0"
        style="fill:#000000;fill-opacity:1;stroke:none"
        id="rect3368"
        width="100.00001"
        height="99.999977"
-       x="480"
+       x="360"
        y="920"
        gameObjType="levelArea" />
     <path
        sodipodi:nodetypes="ccccc"
        style="fill:#ffffff;fill-opacity:1;stroke:none"
-       d="m 535,940 40,0 0,60 -40,0 z"
+       d="m 415,940 40,0 0,60 -40,0 z"
        id="path3370"
        gameObjType="levelGeo"
        inkscape:connector-curvature="0" />
@@ -691,38 +667,24 @@
        style="fill:#ffff00;fill-opacity:1;stroke:none;display:inline"
        id="rect3372"
        height="10"
-       x="560"
+       x="440"
        y="945"
        width="10" />
     <rect
        style="fill:#00ff00;fill-opacity:1;stroke:none;display:inline"
        id="rect3374"
        height="10"
-       x="560"
+       x="440"
        y="990"
        width="10"
        gameObjType="player" />
     <path
        style="fill:#ae550b;fill-opacity:1;stroke:none"
-       d="m 520,990 10,0 0,10 -30,0 0,-30 10,0 0,10 10,0 z"
+       d="m 400,990 10,0 0,10 -30,0 0,-30 10,0 0,10 10,0 z"
        id="path3376"
        gameObjType="rockGeo"
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="ccccccccc" />
-    <path
-       inkscape:connector-curvature="0"
-       gameObjType="levelGeo"
-       id="path3378"
-       d="m 430.00001,945 10,0 0,9.99998 -10,0 z"
-       style="fill:#ffffff;fill-opacity:1;stroke:none"
-       sodipodi:nodetypes="ccccc" />
-    <path
-       sodipodi:nodetypes="ccccc"
-       inkscape:connector-curvature="0"
-       gameObjType="rockGeo"
-       id="path3382"
-       d="m 405.85787,969.99998 7.07107,-7.07107 7.07107,7.07107 -7.07107,7.07107 z"
-       style="fill:#ae550b;fill-opacity:1;stroke:none" />
     <rect
        maxReflections="2"
        style="fill:#000000;fill-opacity:1;stroke:none"
@@ -779,7 +741,7 @@
        width="100.00001"
        id="rect3410"
        style="fill:#000000;fill-opacity:1;stroke:none"
-       maxReflections="3" />
+       maxReflections="0" />
     <path
        inkscape:connector-curvature="0"
        gameObjType="levelGeo"
@@ -811,7 +773,7 @@
        d="m 60,1140 -20,0 0,-40 20,0 z"
        style="fill:#ae550b;fill-opacity:1;stroke:none" />
     <rect
-       maxReflections="2"
+       maxReflections="0"
        style="fill:#000000;fill-opacity:1;stroke:none"
        id="rect3365"
        width="100.00001"
@@ -838,7 +800,7 @@
        style="fill:#00ff00;fill-opacity:1;stroke:none;display:inline"
        id="rect3371"
        height="10"
-       x="150"
+       x="140"
        y="1055"
        width="10"
        gameObjType="player" />
@@ -946,7 +908,7 @@
        gameObjType="player"
        width="10"
        y="470"
-       x="135"
+       x="130"
        height="10"
        id="rect4455"
        style="fill:#00ff00;fill-opacity:1;stroke:none" />
@@ -1296,14 +1258,6 @@
        gameObjType="key" />
     <rect
        width="10"
-       y="945"
-       x="430"
-       height="10"
-       id="rect3380"
-       style="fill:#ff3b00;fill-opacity:1;stroke:none"
-       gameObjType="ballKey" />
-    <rect
-       width="10"
        y="590"
        x="205"
        height="10"
@@ -1390,5 +1344,357 @@
        id="rect3379"
        style="fill:#00a3ff;fill-opacity:1;stroke:none"
        gameObjType="key" />
+    <rect
+       width="10"
+       y="235"
+       x="165"
+       height="10"
+       id="rect4486-1"
+       style="fill:#00c6ff;fill-opacity:1;stroke:#000000;stroke-opacity:1;display:inline"
+       gameObjType="mirror" />
+    <rect
+       gameObjType="mirror"
+       style="fill:#ff8d00;fill-opacity:1;stroke:none;display:inline"
+       id="rect3356"
+       height="10"
+       x="330"
+       y="240"
+       width="10" />
+    <rect
+       width="10"
+       y="240"
+       x="420"
+       height="10"
+       id="rect5579"
+       style="fill:#ff8d00;fill-opacity:1;stroke:none;display:inline"
+       gameObjType="mirror" />
+    <rect
+       width="10"
+       y="470"
+       x="145"
+       height="10"
+       id="rect5581"
+       style="fill:#ff8d00;fill-opacity:1;stroke:none;display:inline"
+       gameObjType="mirror" />
+    <rect
+       gameObjType="mirror"
+       style="fill:#ff8d00;fill-opacity:1;stroke:none;display:inline"
+       id="rect5583"
+       height="10"
+       x="165"
+       y="470"
+       width="10" />
+    <rect
+       width="10"
+       y="605"
+       x="280"
+       height="10"
+       id="rect5585"
+       style="fill:#ff8d00;fill-opacity:1;stroke:none;display:inline"
+       gameObjType="mirror" />
+    <rect
+       gameObjType="mirror"
+       style="fill:#ff8d00;fill-opacity:1;stroke:none;display:inline"
+       id="rect5587"
+       height="10"
+       x="400"
+       y="610"
+       width="10" />
+    <rect
+       width="10"
+       y="605"
+       x="540"
+       height="10"
+       id="rect5589"
+       style="fill:#ff8d00;fill-opacity:1;stroke:none;display:inline"
+       gameObjType="mirror" />
+    <rect
+       gameObjType="mirror"
+       style="fill:#ff8d00;fill-opacity:1;stroke:none;display:inline"
+       id="rect5591"
+       height="10"
+       x="550"
+       y="605"
+       width="10" />
+    <rect
+       width="10"
+       y="730"
+       x="45"
+       height="10"
+       id="rect5593"
+       style="fill:#ff8d00;fill-opacity:1;stroke:none;display:inline"
+       gameObjType="mirror" />
+    <rect
+       gameObjType="mirror"
+       style="fill:#ff8d00;fill-opacity:1;stroke:none;display:inline"
+       id="rect5595"
+       height="10"
+       x="45"
+       y="740"
+       width="10" />
+    <rect
+       gameObjType="mirror"
+       style="fill:#ff8d00;fill-opacity:1;stroke:none;display:inline"
+       id="rect5597"
+       height="10"
+       x="130"
+       y="705"
+       width="10" />
+    <rect
+       width="10"
+       y="1095"
+       x="70"
+       height="10"
+       id="rect5599"
+       style="fill:#ff8d00;fill-opacity:1;stroke:none;display:inline"
+       gameObjType="mirror" />
+    <rect
+       gameObjType="mirror"
+       style="fill:#ff8d00;fill-opacity:1;stroke:none;display:inline"
+       id="rect5601"
+       height="10"
+       x="80"
+       y="1095"
+       width="10" />
+    <rect
+       width="10"
+       y="1095"
+       x="60"
+       height="10"
+       id="rect5603"
+       style="fill:#ff8d00;fill-opacity:1;stroke:none;display:inline"
+       gameObjType="mirror" />
+    <rect
+       gameObjType="mirror"
+       style="fill:#ff8d00;fill-opacity:1;stroke:none;display:inline"
+       id="rect5605"
+       height="10"
+       x="180"
+       y="1055"
+       width="10" />
+    <rect
+       gameObjType="mirror"
+       style="fill:#ff8d00;fill-opacity:1;stroke:none;display:inline"
+       id="rect5607"
+       height="10"
+       x="160"
+       y="1055"
+       width="10" />
+    <rect
+       width="10"
+       y="935"
+       x="130"
+       height="10"
+       id="rect5609"
+       style="fill:#ff8d00;fill-opacity:1;stroke:none;display:inline"
+       gameObjType="mirror" />
+    <rect
+       gameObjType="mirror"
+       style="fill:#ff8d00;fill-opacity:1;stroke:none;display:inline"
+       id="rect5611"
+       height="10"
+       x="300"
+       y="975"
+       width="10" />
+    <rect
+       width="10"
+       y="970"
+       x="420"
+       height="10"
+       id="rect5613"
+       style="fill:#ff8d00;fill-opacity:1;stroke:none;display:inline"
+       gameObjType="mirror" />
+    <rect
+       gameObjType="mirror"
+       style="fill:#ff8d00;fill-opacity:1;stroke:none;display:inline"
+       id="rect5615"
+       height="10"
+       x="420"
+       y="985"
+       width="10" />
+    <rect
+       gameObjType="mirror"
+       style="fill:#ff8d00;fill-opacity:1;stroke:none;display:inline"
+       id="rect5617"
+       height="10"
+       x="30"
+       y="970"
+       width="10" />
+    <rect
+       gameObjType="mirror"
+       style="fill:#ff8d00;fill-opacity:1;stroke:none;display:inline"
+       id="rect5619"
+       height="10"
+       x="420"
+       y="840"
+       width="10" />
+    <text
+       xml:space="preserve"
+       style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       x="20"
+       y="215"
+       id="text5621"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan5623"
+         x="20"
+         y="215"
+         style="font-size:12px;fill:#ffffff;fill-opacity:1">Hello World</tspan></text>
+    <text
+       sodipodi:linespacing="125%"
+       id="text5625"
+       y="215"
+       x="140"
+       style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       xml:space="preserve"><tspan
+         style="font-size:12px;fill:#ffffff;fill-opacity:1"
+         y="215"
+         x="140"
+         id="tspan5627"
+         sodipodi:role="line">The Gimmick</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       x="255"
+       y="220"
+       id="text5629"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan5631"
+         x="255"
+         y="220"
+         style="font-size:12px;fill:#ffffff;fill-opacity:1">Copy Paste</tspan></text>
+    <text
+       sodipodi:linespacing="125%"
+       id="text5633"
+       y="220"
+       x="365"
+       style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       xml:space="preserve"><tspan
+         style="font-size:12px;fill:#ffffff;fill-opacity:1"
+         y="220"
+         x="365"
+         id="tspan5635"
+         sodipodi:role="line">Helping Hand</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       x="10"
+       y="400"
+       id="text5637"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan5639"
+         x="10"
+         y="400"
+         style="font-size:12px;fill:#ffffff;fill-opacity:1">Heads Up</tspan></text>
+    <text
+       sodipodi:linespacing="125%"
+       id="text5641"
+       y="410"
+       x="145"
+       style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       xml:space="preserve"><tspan
+         style="font-size:12px;fill:#ffffff;fill-opacity:1"
+         y="410"
+         x="145"
+         id="tspan5643"
+         sodipodi:role="line">Knievel</tspan></text>
+    <text
+       sodipodi:linespacing="125%"
+       id="text5645"
+       y="405"
+       x="265"
+       style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       xml:space="preserve"><tspan
+         style="font-size:12px;fill:#ffffff;fill-opacity:1"
+         y="405"
+         x="265"
+         id="tspan5647"
+         sodipodi:role="line">Pretentious</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       x="15"
+       y="525"
+       id="text5649"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan5651"
+         x="15"
+         y="525"
+         style="font-size:12px;fill:#ffffff;fill-opacity:1">Terrible Twos</tspan></text>
+    <text
+       sodipodi:linespacing="125%"
+       id="text5653"
+       y="535"
+       x="135"
+       style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       xml:space="preserve"><tspan
+         style="font-size:12px;fill:#ffffff;fill-opacity:1"
+         y="535"
+         x="135"
+         id="tspan5655"
+         sodipodi:role="line">Wrap Up</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       x="250"
+       y="530"
+       id="text5657"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan5659"
+         x="250"
+         y="530"
+         style="font-size:12px;fill:#ffffff;fill-opacity:1">Highs and Lows</tspan></text>
+    <text
+       sodipodi:linespacing="125%"
+       id="text5661"
+       y="640"
+       x="10"
+       style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       xml:space="preserve"><tspan
+         style="font-size:12px;fill:#ffffff;fill-opacity:1"
+         y="640"
+         x="10"
+         id="tspan5663"
+         sodipodi:role="line">We Got Keys</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       x="125"
+       y="655"
+       id="text5665"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan5667"
+         x="125"
+         y="655"
+         style="font-size:12px;fill:#ffffff;fill-opacity:1">Lows and Highs</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       x="255"
+       y="575"
+       id="text5669"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan5671"
+         x="255"
+         y="575"
+         style="font-size:12px;fill:#ffffff;fill-opacity:1">Foothold</tspan></text>
+    <text
+       sodipodi:linespacing="125%"
+       id="text5673"
+       y="575"
+       x="390"
+       style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       xml:space="preserve"><tspan
+         style="font-size:12px;fill:#ffffff;fill-opacity:1"
+         y="575"
+         x="390"
+         id="tspan5675"
+         sodipodi:role="line" /></text>
   </g>
 </svg>

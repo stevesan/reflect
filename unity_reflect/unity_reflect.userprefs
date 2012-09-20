@@ -1,11 +1,14 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/scripts/UnityUtils/Math2D.js">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\scripts\GameController.js">
     <Files>
-      <File FileName="Assets/scripts/UnityUtils/ProGeo.js" Line="1" Column="1" />
-      <File FileName="Assets/scripts/GameController.js" Line="1" Column="1" />
-      <File FileName="Assets/scripts/UnityUtils/SnowflakeSystem.js" Line="50" Column="20" />
-      <File FileName="Assets/scripts/UnityUtils/Math2D.js" Line="132" Column="1" />
+      <File FileName="Assets\scripts\Key.js" Line="36" Column="3" />
+      <File FileName="Assets\scripts\UnityUtils\ProGeo.js" Line="1" Column="1" />
+      <File FileName="Assets\scripts\GameController.js" Line="135" Column="4" />
+      <File FileName="Assets\scripts\UnityUtils\SnowflakeSystem.js" Line="1" Column="1" />
+      <File FileName="Assets\scripts\UnityUtils\Math2D.js" Line="1" Column="1" />
+      <File FileName="Assets\scripts\PlayerAnim.js" Line="1" Column="1" />
+      <File FileName="Assets\scripts\PlayerControl.js" Line="1" Column="1" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

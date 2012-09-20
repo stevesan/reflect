@@ -9,6 +9,7 @@ var snapReflectAngle = true;
 var canMoveWhileReflecting = true;
 private var mirrorAngleSpeed = 2*Mathf.PI;
 
+
 //----------------------------------------
 //  Prefabs/Puppet-objects
 //----------------------------------------
@@ -20,6 +21,7 @@ var player : GameObject;
 var goal : GameObject;
 var keyPrefab : GameObject;
 var ballKeyPrefab : GameObject;
+var mirrorPrefab : GameObject = null;
 var background : GameObject;
 var safeArea : SafeArea;
 
@@ -89,9 +91,9 @@ var debugDrawPolygonOutline = false;
 //  Per-session state
 //----------------------------------------
 private var levels : List.<LevelInfo> = null;
-private var currLevId : int = 0;
-private var goalLevId : int = 0;
-private var currLevPoly : Mesh2D = null;
+private var currLevId : int = 0;	// current level
+private var goalLevId : int = 0;	// which level we're fading into
+private var currLevPoly : Mesh2D = null;	// current effective geometry
 private var gamestate:String;
 
 //----------------------------------------
@@ -105,7 +107,8 @@ private var objectInsts = new Array();
 //  Reflection UI state
 //----------------------------------------
 private var isReflecting = false;
-private var numReflections = 0;
+private var numReflectionsDone = 0;
+private var numReflectionsAllowed = 0;
 private var lineStart = Vector2(0,0);
 private var lineEnd = Vector2(0,0);
 private var mirrorAngle = 0.0;
@@ -133,6 +136,14 @@ function OnGetGoal()
 		{
 			AudioSource.PlayClipAtPoint( goalLockedSound, hostcam.transform.position );
 		}
+	}
+}
+
+function OnGetMirror( mirror:Mirror )
+{
+	if( gamestate == 'playing' ) {
+		numReflectionsAllowed++;
+		Destroy(mirror.gameObject);
 	}
 }
 
@@ -255,10 +266,11 @@ function OnCollidingGeometryChanged()
 function SwitchLevel( id:int )
 {
 	Debug.Log('switching to level '+id);
+	
 	// we'll be changing the geo, obviously, so make a copy
 	isReflecting = false;
 	player.GetComponent(PlayerControl).inputEnabled = true;
-	numReflections = 0;
+	numReflectionsDone = 0;
 	currLevId = id;
 
 	currLevPoly = levels[id].geo.Duplicate();
@@ -309,8 +321,9 @@ function SwitchLevel( id:int )
 	//Debug.Log('level area center at '+levels[id].areaCenter);
 
 	//----------------------------------------
-	//  Spawn keys
+	//  Spawn objects
 	//----------------------------------------
+	
 	numKeysGot = 0;
 	numKeys = 0;
 	for( inst in objectInsts )
@@ -320,8 +333,16 @@ function SwitchLevel( id:int )
 	// disable the prefabs
 	keyPrefab.active = false;
 	Utils.HideAll( keyPrefab );
+	
 	ballKeyPrefab.active = false;
 	Utils.HideAll( ballKeyPrefab );
+	
+	mirrorPrefab.active = false;
+	Utils.HideAll( mirrorPrefab );
+	
+	numReflectionsAllowed = levels[id].maxReflections;
+	
+	// spawn all objects
 
 	for( lobj in levels[id].objects ) {
 		var obj:GameObject = null;
@@ -336,6 +357,13 @@ function SwitchLevel( id:int )
 			obj = Instantiate( ballKeyPrefab, lobj.pos, ballKeyPrefab.transform.rotation );
 			// make it NOT collide with the player, so it doesn't affect player's motion
 			Physics.IgnoreCollision( obj.GetComponent(Collider), player.GetComponent(Collider) );
+		}
+		else if( lobj.type == 'mirror' ) {
+			obj = Instantiate( mirrorPrefab, lobj.pos, mirrorPrefab.transform.rotation );
+			obj.GetComponent(Mirror).receiver = this.gameObject;
+		}
+		else {
+		Debug.LogError('Invalid gameobject type from Inkscape export: '+lobj.type);
 		}
 
 		// setup
@@ -574,7 +602,7 @@ function Update()
 
 					// update state
 					player.GetComponent(PlayerControl).inputEnabled = true;
-					numReflections++;
+					numReflectionsDone++;
 					isReflecting = false;
 				}
 				else if( Input.GetButtonDown('Cancel'))
@@ -591,15 +619,15 @@ function Update()
 			else {
 
 				// setup HUD text
-				if( GetLevel().maxReflections > 0 ) {
+				if( numReflectionsAllowed > 0 ) {
 					helpText.text = 'Click - Reflect';
-					helpText.text += '\n' + numReflections + ' / ' + GetLevel().maxReflections;
+					helpText.text += '\n' + numReflectionsDone + ' / ' + numReflectionsAllowed;
 				} else
 					helpText.text = 'W A D - jump, move';
 
 				if( Input.GetButtonDown('ReflectToggle') )
 				{
-					if( numReflections >= GetLevel().maxReflections && !debugUnlimited )
+					if( numReflectionsDone >= numReflectionsAllowed && !debugUnlimited )
 					{
 						// no more allowed
 						AudioSource.PlayClipAtPoint( maxedReflectionsSnd, hostcam.transform.position );

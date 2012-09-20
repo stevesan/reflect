@@ -34,13 +34,26 @@ function Update () {
 		if( walk != 0 ) {
 			lastJumpDir = walk;
 		}
+		
+		var ySpeed = player.gameObject.GetComponent(Rigidbody).velocity.y;
 		// don't modify the last jump dir if the player didn't want to move
-		if( lastJumpDir < 0.0 )
-			PlayIdem('jumpLeft');
-		else if( lastJumpDir > 0.0 )
-			PlayIdem('jumpRight');
-		else
-			PlayIdem('jumpStraight');
+		if( ySpeed > 0.0 ) {
+			if( lastJumpDir < 0.0 )
+				PlayIdem('jumpLeft');
+			else if( lastJumpDir > 0.0 )
+				PlayIdem('jumpRight');
+			else
+				PlayIdem('jumpStraight');
+		}
+		else {
+			// falling
+			if( lastJumpDir < 0.0 )
+				PlayIdem('walkLeft');
+			else if( lastJumpDir > 0.0 )
+				PlayIdem('walkRight');
+			else
+				PlayIdem('idle');
+		}
 	}
 
 }
