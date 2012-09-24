@@ -1,11 +1,11 @@
 
 TODO:
-- pickup mirrors
+- solution logging..go through Django tutorials again
+- pickup mirror temp graphic, sound, fx
 - pickup mirror puzzles!
 - clamp cursor icon (hide pointer?) to screen
 - reflect effects: try some "looks" in photoshop..
 		current geo "behind" mirror (ie. in the reflected side) should be in dotted outline?
-- solution logging..
 - consider just offering various "moments of reflection" when each puzzle is solved! just like..quotes.
 - look at how Sworcery does its "worship mode". When in mirror mode, we should have a low hum noise in the BG, it should shimmer when the mouse moves, light should emit from the edge, etc.
 - for SJ: animate carrot/keys

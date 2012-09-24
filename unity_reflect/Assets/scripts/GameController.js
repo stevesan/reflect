@@ -9,7 +9,6 @@ var snapReflectAngle = true;
 var canMoveWhileReflecting = true;
 private var mirrorAngleSpeed = 2*Mathf.PI;
 
-
 //----------------------------------------
 //  Prefabs/Puppet-objects
 //----------------------------------------
@@ -24,8 +23,6 @@ var ballKeyPrefab : GameObject;
 var mirrorPrefab : GameObject = null;
 var background : GameObject;
 var safeArea : SafeArea;
-
-var spritesToFade : Tk2dAnimSpriteFade[];
 
 //----------------------------------------
 //  Objects for level geometry/UI
@@ -72,6 +69,7 @@ var keyGetSound : AudioClip;
 var goalLockedSound: AudioClip;
 var maxedReflectionsSnd: AudioClip;
 var rotateSnd : AudioClip;
+var mirrorGetSnd : AudioClip;
 
 //----------------------------------------
 //  Particle FX
@@ -144,6 +142,7 @@ function OnGetMirror( mirror:Mirror )
 	if( gamestate == 'playing' ) {
 		numReflectionsAllowed++;
 		Destroy(mirror.gameObject);
+		AudioSource.PlayClipAtPoint( mirrorGetSnd, hostcam.transform.position );
 	}
 }
 
@@ -151,12 +150,10 @@ function OnGetMirror( mirror:Mirror )
 //  t is from 0 to 1
 //----------------------------------------
 function SetFadeAmount( t:float ) {
+	GetComponent(FadeAmount).SetFadeAmount(t);
 	mainLight.intensity = t * origLightIntensity;
 	levelNumber.GetComponent(GUITextFade).SetFadeAmount(t);
 	helpText.GetComponent(GUITextFade).SetFadeAmount(t);
-
-	for( fader in spritesToFade )
-		fader.SetFadeAmount(t);
 }
 
 function FadeToLevel( levId:int ) {
