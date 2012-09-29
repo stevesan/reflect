@@ -1,22 +1,6 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\scripts\UnityUtils\Tk2dAnimSpriteFade.js">
-    <Files>
-      <File FileName="Assets\scripts\UnityUtils\MuteOnPause.js" Line="6" Column="1" />
-      <File FileName="Assets\scripts\Key.js" Line="1" Column="1" />
-      <File FileName="Assets\scripts\UnityUtils\ProGeo.js" Line="1" Column="1" />
-      <File FileName="Assets\scripts\GameController.js" Line="147" Column="3" />
-      <File FileName="Assets\scripts\UnityUtils\SnowflakeSystem.js" Line="1" Column="1" />
-      <File FileName="Assets\scripts\UnityUtils\Math2D.js" Line="1" Column="1" />
-      <File FileName="Assets\scripts\PlayerAnim.js" Line="1" Column="1" />
-      <File FileName="Assets\scripts\PlayerControl.js" Line="1" Column="1" />
-      <File FileName="Assets\scripts\Mirror.js" Line="18" Column="10" />
-      <File FileName="Assets\scripts\Tracking.js" Line="22" Column="19" />
-      <File FileName="Assets\scripts\UnityUtils\Tk2dAnimSpriteFade.js" Line="19" Column="45" />
-      <File FileName="Assets\Plugins\tk2d\Sprites\tk2dBaseSprite.cs" Line="43" Column="1" />
-      <File FileName="Assets\Plugins\tk2d\Sprites\tk2dSprite.cs" Line="23" Column="1" />
-    </Files>
-  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.Workbench />
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore>
       <Breakpoint enabled="false" file="/Users/stevesan84/reflect/unity_reflect/Assets/scripts/Utils/ProGeo.js" line="194" />

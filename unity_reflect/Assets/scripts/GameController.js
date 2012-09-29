@@ -128,7 +128,7 @@ function OnGetGoal()
 	if( gamestate == 'playing' ) {
 		if( numKeysGot == numKeys ) {
 			if( tracker != null )
-				tracker.PostEvent( new TrackingEvent("beatLevel", "levelId="+currLevId) );
+				tracker.PostEvent( "beatLevel", ""+currLevId );
 
 			FadeToLevel( (currLevId+1) % levels.Count );
 			goal.GetComponent(Star).SetShown( false );
@@ -188,7 +188,7 @@ function OnGetKey( keyObj:GameObject )
 	keyGetFx.Play();
 
 	if( tracker != null )
-		tracker.PostEvent( new TrackingEvent("gotKey", "keyPos="+keyObj.transform.position) );
+		tracker.PostEvent( "gotKey", ""+keyObj.transform.position );
 }
 
 function PolysToStroke( polys:Mesh2D, vmax:float, width:float, buffer:MeshBuffer, mesh:Mesh )
@@ -391,7 +391,7 @@ function SwitchLevel( id:int )
 	'          [ ] - Skip';
 
 	if( tracker != null )
-		tracker.PostEvent( new TrackingEvent("startLevel", "levelId="+id) );
+		tracker.PostEvent( "startLevel", ""+id );
 }
 
 function Awake()
@@ -482,6 +482,24 @@ function OnPlayerFallout() : void
 	}
 }
 
+class ReflectEventDetails
+{
+	var mirrorAngle:float;
+	var mirrorPos:float[];
+	var playerPos:float[];
+	
+	function ToJson() : String { return JsonMapper.ToJson(this); }
+	
+	static function CreateToJson( _mirrorAngle:float, _mirrorPos:Vector3, _playerPos:Vector3 ) : String
+	{
+		var e = new ReflectEventDetails();
+		e.mirrorAngle = _mirrorAngle;
+		e.mirrorPos = Utils.To2Array(_mirrorPos);
+		e.playerPos = Utils.To2Array(_playerPos);
+		return e.ToJson();		
+	}
+};
+
 function Update()
 {
 	if( gamestate == 'startscreen' ) {
@@ -532,7 +550,7 @@ function Update()
 				previewTriRender.gameObject.GetComponent(Renderer).enabled = false;
 
 				if( tracker != null )
-					tracker.PostEvent( new TrackingEvent("resetLevel", "levelId="+currLevId) );
+					tracker.PostEvent( "resetLevel", ""+currLevId );
 			}
 			else if( Input.GetButtonDown('NextLevel') ) {
 				FadeToLevel( (currLevId+1)%levels.Count );
@@ -620,7 +638,8 @@ function Update()
 					isReflecting = false;
 
 					if( tracker != null )
-						tracker.PostEvent( new TrackingEvent("reflect", "angle="+mirrorAngle+",position="+lineStart+",playerPosition="+player.transform.position));
+						tracker.PostEvent( "reflect", 
+							ReflectEventDetails.CreateToJson( mirrorAngle, lineStart, player.transform.position ));
 				}
 				else if( Input.GetButtonDown('Cancel'))
 				{

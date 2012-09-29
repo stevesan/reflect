@@ -1,7 +1,7 @@
 
 TODO:
-- solution logging..go through Django tutorials again
-- pickup mirror temp graphic, sound, fx
+- logging: use json for pick up mirror, key positions
+- pickup mirror fly-to-corner effect
 - pickup mirror puzzles!
 - clamp cursor icon (hide pointer?) to screen
 - reflect effects: try some "looks" in photoshop..

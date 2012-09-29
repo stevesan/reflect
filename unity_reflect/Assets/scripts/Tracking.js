@@ -1,10 +1,16 @@
 /*
 Tracking, as in player-action tracking over the internet.
 */
-
 #pragma strict
 
+import LitJson;
+
+#if UNITY_EDITOR
+private var urlPrefix = "http://localhost:8000/mor/";
+#else
 private var urlPrefix = "http://lobotovor.herokuapp.com/mor/";
+#endif
+
 private var playerId:int = -1;
 private var sessionId:int = -1;
 private var state = "needPlayerId";
@@ -73,13 +79,15 @@ function Start () {
 	}
 }
 
-function PostEvent( e:TrackingEvent )
+function PostEvent( category:String, json:String )
 {
-	var request = new WWW(urlPrefix + "post_event?session_id="+sessionId
-		+ "&category=" + e.category
-		+ "&data_json=" + e.dataJson
-		+ "&session_secs=" + Time.timeSinceLevelLoad );
-	// No need to yield - don't care about response
+	if( state == "inSession" ) {
+		var request = new WWW(urlPrefix + "post_event?session_id="+sessionId
+			+ "&category=" + WWW.EscapeURL(category)
+			+ "&data_json=" + WWW.EscapeURL(json)
+			+ "&session_secs=" + Time.timeSinceLevelLoad );
+		// No need to yield - don't care about response
+	}
 }
 
 function Update () {
