@@ -10,13 +10,22 @@ private var sessionId:int = -1;
 private var state = "needPlayerId";
 private var pingPeriod = 10;
 
+class TrackingEvent
+{
+	var category:String;
+	var dataJson:String;
+
+	function TrackingEvent( _cat:String, _dataJson:String ) {
+		category = _cat;
+		dataJson = _dataJson;
+	}
+};
+
 function Awake() {
 }
 
 function Start () {
 	while(true) {
-		yield WaitForSeconds(1.0);
-
 		if( state == "needPlayerId" ) {
 			if( PlayerPrefs.HasKey("player_id") ) {
 				playerId = PlayerPrefs.GetInt("player_id");
@@ -59,10 +68,20 @@ function Start () {
 			// ping the server every n seconds
 			yield WaitForSeconds(pingPeriod);
 			request = new WWW(urlPrefix + "ping_session?session_id="+sessionId);
-			yield request;
+			// no need to yield - don't care about response
 		}
 	}
 }
 
+function PostEvent( e:TrackingEvent )
+{
+	var request = new WWW(urlPrefix + "post_event?session_id="+sessionId
+		+ "&category=" + e.category
+		+ "&data_json=" + e.dataJson
+		+ "&session_secs=" + Time.timeSinceLevelLoad );
+	// No need to yield - don't care about response
+}
+
 function Update () {
+	
 }

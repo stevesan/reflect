@@ -10,6 +10,11 @@ var canMoveWhileReflecting = true;
 private var mirrorAngleSpeed = 2*Mathf.PI;
 
 //----------------------------------------
+//  Components instances we use
+//----------------------------------------
+var tracker:Tracking = null;
+
+//----------------------------------------
 //  Prefabs/Puppet-objects
 //----------------------------------------
 var helpText : GUIText;
@@ -122,6 +127,9 @@ function OnGetGoal()
 {
 	if( gamestate == 'playing' ) {
 		if( numKeysGot == numKeys ) {
+			if( tracker != null )
+				tracker.PostEvent( new TrackingEvent("beatLevel", "levelId="+currLevId) );
+
 			FadeToLevel( (currLevId+1) % levels.Count );
 			goal.GetComponent(Star).SetShown( false );
 
@@ -178,6 +186,9 @@ function OnGetKey( keyObj:GameObject )
 	AudioSource.PlayClipAtPoint( keyGetSound, hostcam.transform.position );
 	keyGetFx.transform.position = keyObj.transform.position;
 	keyGetFx.Play();
+
+	if( tracker != null )
+		tracker.PostEvent( new TrackingEvent("gotKey", "keyPos="+keyObj.transform.position) );
 }
 
 function PolysToStroke( polys:Mesh2D, vmax:float, width:float, buffer:MeshBuffer, mesh:Mesh )
@@ -378,6 +389,9 @@ function SwitchLevel( id:int )
 	levelNumber.text = 'Moment '+(currLevId+1)+ '/'+levels.Count+
 	'          R - Reset'+
 	'          [ ] - Skip';
+
+	if( tracker != null )
+		tracker.PostEvent( new TrackingEvent("startLevel", "levelId="+id) );
 }
 
 function Awake()
@@ -479,7 +493,7 @@ function Update()
 		levelNumber.text = '';
 		helpText.text = '';
 
-		if( Input.GetButtonDown('ReflectToggle') ) {
+		if( Input.GetButtonDown('ReflectToggle') || Input.GetButtonDown('NextLevel') ) {
 			FadeToLevel( 0 );
 			Destroy( titleText );
 			AudioSource.PlayClipAtPoint( restartSnd, hostcam.transform.position );
@@ -516,6 +530,9 @@ function Update()
 				AudioSource.PlayClipAtPoint( restartSnd, hostcam.transform.position );
 				FadeToLevel( currLevId );
 				previewTriRender.gameObject.GetComponent(Renderer).enabled = false;
+
+				if( tracker != null )
+					tracker.PostEvent( new TrackingEvent("resetLevel", "levelId="+currLevId) );
 			}
 			else if( Input.GetButtonDown('NextLevel') ) {
 				FadeToLevel( (currLevId+1)%levels.Count );
@@ -601,6 +618,9 @@ function Update()
 					player.GetComponent(PlayerControl).inputEnabled = true;
 					numReflectionsDone++;
 					isReflecting = false;
+
+					if( tracker != null )
+						tracker.PostEvent( new TrackingEvent("reflect", "angle="+mirrorAngle+",position="+lineStart+",playerPosition="+player.transform.position));
 				}
 				else if( Input.GetButtonDown('Cancel'))
 				{
