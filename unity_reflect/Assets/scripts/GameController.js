@@ -1,6 +1,7 @@
 #pragma strict
 
 import System.IO;
+import System.Text;
 
 static var Singleton : GameController = null;
 
@@ -151,6 +152,16 @@ function OnGetMirror( mirror:Mirror )
 		numReflectionsAllowed++;
 		Destroy(mirror.gameObject);
 		AudioSource.PlayClipAtPoint( mirrorGetSnd, hostcam.transform.position );
+		
+		if( tracker != null )
+		{
+			var json = new ToStringJsonWriter();
+			json.WriteObjectStart();
+			json.Write("mirrorPos", Utils.ToVector2(mirror.transform.position));
+			json.WriteObjectEnd();
+			tracker.PostEvent( "gotMirror", json.GetString() );
+		}
+
 	}
 }
 
@@ -188,7 +199,13 @@ function OnGetKey( keyObj:GameObject )
 	keyGetFx.Play();
 
 	if( tracker != null )
-		tracker.PostEvent( "gotKey", ""+keyObj.transform.position );
+	{
+		var json = new ToStringJsonWriter();
+		json.WriteObjectStart();
+		json.Write("keyPos", Utils.ToVector2(keyObj.transform.position));
+		json.WriteObjectEnd();
+		tracker.PostEvent( "gotKey", json.GetString() );
+	}
 }
 
 function PolysToStroke( polys:Mesh2D, vmax:float, width:float, buffer:MeshBuffer, mesh:Mesh )
@@ -638,8 +655,15 @@ function Update()
 					isReflecting = false;
 
 					if( tracker != null )
-						tracker.PostEvent( "reflect", 
-							ReflectEventDetails.CreateToJson( mirrorAngle, lineStart, player.transform.position ));
+					{
+						var json = new ToStringJsonWriter();
+						json.WriteObjectStart();
+						json.Write("mirrorAngle", mirrorAngle);
+						json.Write("lineStart", Utils.ToVector2(lineStart));
+						json.Write("playerPos", Utils.ToVector2(player.transform.position));
+						json.WriteObjectEnd();
+						tracker.PostEvent( "reflect", json.GetString() );
+					}
 				}
 				else if( Input.GetButtonDown('Cancel'))
 				{

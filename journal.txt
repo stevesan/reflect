@@ -1,8 +1,7 @@
 
 TODO:
-- figure out why level30 web build doesn't include the right part..
-- logging: use json for pick up mirror, key positions
 - pickup mirror fly-to-corner effect
+- figure out why level30 web build doesn't include the right part..
 - pickup mirror puzzles!
 - clamp cursor icon (hide pointer?) to screen
 - reflect effects: try some "looks" in photoshop..

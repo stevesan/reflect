@@ -1,6 +1,11 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\scripts\GameController.js">
+    <Files>
+      <File FileName="Assets\scripts\Tracking.js" Line="55" Column="8" />
+      <File FileName="Assets\scripts\GameController.js" Line="485" Column="1" />
+    </Files>
+  </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore>
       <Breakpoint enabled="false" file="/Users/stevesan84/reflect/unity_reflect/Assets/scripts/Utils/ProGeo.js" line="194" />
