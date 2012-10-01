@@ -1,5 +1,6 @@
 
 TODO:
+- i need to give each level a unique name, cuz i'll be modifying the level order.
 - pickup mirror fly-to-corner effect
 - figure out why level30 web build doesn't include the right part..
 - pickup mirror puzzles!
