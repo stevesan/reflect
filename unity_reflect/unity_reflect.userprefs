@@ -2,8 +2,9 @@
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
   <MonoDevelop.Ide.Workbench ActiveDocument="Assets\scripts\GameController.js">
     <Files>
-      <File FileName="Assets\scripts\Tracking.js" Line="55" Column="8" />
-      <File FileName="Assets\scripts\GameController.js" Line="485" Column="1" />
+      <File FileName="Assets\scripts\GameController.js" Line="199" Column="18" />
+      <File FileName="Assets\scripts\UnityUtils\LitJsonUtils.js" Line="57" Column="3" />
+      <File FileName="Assets\Plugins\litjson_src\JsonWriter.cs" Line="95" Column="3" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

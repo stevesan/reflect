@@ -6,6 +6,7 @@ var onGetSound:AudioClip = null;
 var flySecs:float = 0.5;
 var mainCam:Camera;
 var guiFlyTarget:GUIText;
+var tracker : Tracking = null;
 
 private var state = "normal";
 private var flyStartTime:float;
@@ -41,11 +42,21 @@ function OnTriggerEnter(other : Collider) : void
 			flyStartTime = Time.time;
 			flySource = transform.position;
 
+			// Kick off fly animation
 			var ssX = guiFlyTarget.transform.position.x * mainCam.pixelWidth;
 			var ssY = guiFlyTarget.transform.position.y * mainCam.pixelHeight;
 			var ray = mainCam.ScreenPointToRay( Vector3(ssX, ssY, 0 ));
 			var t = (mainCam.nearClipPlane-ray.origin.z) / ray.direction.z;
 			flyTarget = ray.origin + t*ray.direction;
+			
+			if( tracker != null )
+			{
+				var json = new ToStringJsonWriter();
+				json.WriteObjectStart();
+				json.Write("mirrorPos", Utils.ToVector2(transform.position));
+				json.WriteObjectEnd();
+				tracker.PostEvent( "gotMirror", json.GetString() );
+			}
 		}
 	}
 }

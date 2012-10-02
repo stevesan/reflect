@@ -150,15 +150,6 @@ function OnGetMirror( mirror:Mirror )
 	if( gamestate == 'playing' ) {
 		numReflectionsAllowed++;
 		Destroy(mirror.gameObject);
-
-		if( tracker != null )
-		{
-			var json = new ToStringJsonWriter();
-			json.WriteObjectStart();
-			json.Write("mirrorPos", Utils.ToVector2(mirror.transform.position));
-			json.WriteObjectEnd();
-			tracker.PostEvent( "gotMirror", json.GetString() );
-		}
 	}
 }
 
