@@ -149,8 +149,7 @@ function OnGetGoal()
 function OnGetMirror( mirror:Mirror )
 {
 	if( gamestate == 'playing' ) {
-		numReflectionsAllowed++;
-		Destroy(mirror.gameObject);
+		mirror.GetComponent(AnimateSignal).SignalPlay(this.gameObject);
 		AudioSource.PlayClipAtPoint( mirrorGetSnd, hostcam.transform.position );
 		
 		if( tracker != null )
@@ -162,6 +161,14 @@ function OnGetMirror( mirror:Mirror )
 			tracker.PostEvent( "gotMirror", json.GetString() );
 		}
 
+	}
+}
+
+function OnAnimationDone( obj:GameObject )
+{
+	if( obj.GetComponent(Mirror) != null ) {
+		numReflectionsAllowed++;
+		Destroy(obj);
 	}
 }
 
