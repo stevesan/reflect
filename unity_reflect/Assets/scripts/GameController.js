@@ -75,7 +75,6 @@ var keyGetSound : AudioClip;
 var goalLockedSound: AudioClip;
 var maxedReflectionsSnd: AudioClip;
 var rotateSnd : AudioClip;
-var mirrorGetSnd : AudioClip;
 
 //----------------------------------------
 //  Particle FX
@@ -149,9 +148,9 @@ function OnGetGoal()
 function OnGetMirror( mirror:Mirror )
 {
 	if( gamestate == 'playing' ) {
-		mirror.GetComponent(AnimateSignal).SignalPlay(this.gameObject);
-		AudioSource.PlayClipAtPoint( mirrorGetSnd, hostcam.transform.position );
-		
+		numReflectionsAllowed++;
+		Destroy(mirror.gameObject);
+
 		if( tracker != null )
 		{
 			var json = new ToStringJsonWriter();
@@ -160,15 +159,6 @@ function OnGetMirror( mirror:Mirror )
 			json.WriteObjectEnd();
 			tracker.PostEvent( "gotMirror", json.GetString() );
 		}
-
-	}
-}
-
-function OnAnimationDone( obj:GameObject )
-{
-	if( obj.GetComponent(Mirror) != null ) {
-		numReflectionsAllowed++;
-		Destroy(obj);
 	}
 }
 
