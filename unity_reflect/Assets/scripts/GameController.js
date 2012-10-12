@@ -21,6 +21,10 @@ var tracker:Tracking = null;
 var helpText : GUIText;
 var levelNumber : GUIText;
 var titleText : GUIText;
+var level0Tute : GUIText;
+var level1TuteA : GUIText;
+var level1TuteB : GUIText;
+var level4Tute : GUIText;
 
 var player : GameObject;
 var goal : GameObject;
@@ -55,6 +59,9 @@ private var rockOutlineBuffer = new MeshBuffer();
 var mainLight : Light;
 var fadeOutTime = 0.5;
 var fadeInTime = 0.1;
+var fastFadeOutTime = 0.25;
+var fastFadeInTime = 0.25;
+private var doFastFade = false;
 private var origLightIntensity : float;
 private var fadeStart : float;
 
@@ -130,7 +137,7 @@ function OnGetGoal()
 			if( tracker != null )
 				tracker.PostEvent( "beatLevel", ""+currLevId );
 
-			FadeToLevel( (currLevId+1) % levels.Count );
+			FadeToLevel( (currLevId+1) % levels.Count, false );
 			goal.GetComponent(Star).SetShown( false );
 
 			// fireworks
@@ -163,11 +170,12 @@ function SetFadeAmount( t:float ) {
 	helpText.GetComponent(GUITextFade).SetFadeAmount(t);
 }
 
-function FadeToLevel( levId:int ) {
+function FadeToLevel( levId:int, fast:boolean ) {
 	// fade into next level
 	gamestate = 'fadingOut';
 	fadeStart = Time.time;
 	goalLevId = levId;
+	doFastFade = fast;
 }
 
 function UpdateGoalLocked()
@@ -392,7 +400,7 @@ function SwitchLevel( id:int )
 
 	// put up correct status text
 	levelNumber.text = 'Moment '+(currLevId+1)+ '/'+levels.Count+
-	'          R - Reset'+
+	'          P - Reset'+
 	'          [ ] - Skip';
 
 	if( tracker != null )
@@ -482,7 +490,7 @@ function OnPlayerFallout() : void
 	if( gamestate == 'playing' ) {
 		// reset
 		AudioSource.PlayClipAtPoint( restartSnd, hostcam.transform.position );
-		FadeToLevel( currLevId );
+		FadeToLevel( currLevId, false );
 		previewTriRender.gameObject.GetComponent(Renderer).enabled = false;
 	}
 }
@@ -507,6 +515,12 @@ class ReflectEventDetails
 
 function Update()
 {
+	level0Tute.enabled = false;
+	level1TuteA.enabled = false;
+	level1TuteB.enabled = false;
+	level4Tute.enabled = false;
+	helpText.text = "";
+
 	if( gamestate == 'startscreen' ) {
 		// fading in
 		var alpha = Mathf.Clamp( (Time.time-fadeStart) / fadeInTime, 0.0, 1.0 );
@@ -514,16 +528,16 @@ function Update()
 
 		// clear the other text objects
 		levelNumber.text = '';
-		helpText.text = '';
 
 		if( Input.GetButtonDown('ReflectToggle') || Input.GetButtonDown('NextLevel') ) {
-			FadeToLevel( 0 );
-			Destroy( titleText );
+			FadeToLevel( 0, false );
 			AudioSource.PlayClipAtPoint( restartSnd, hostcam.transform.position );
+			Destroy(titleText);
 		}
 	}
 	else if( gamestate == 'fadingOut' ) {
-		alpha = Mathf.Clamp( (Time.time-fadeStart) / fadeOutTime, 0.0, 1.0 );
+		var outTime = (doFastFade ? fastFadeOutTime : fadeOutTime);
+		alpha = Mathf.Clamp( (Time.time-fadeStart) / outTime, 0.0, 1.0 );
 		SetFadeAmount( 1-alpha );
 
 		if( alpha >= 1.0 ) {
@@ -541,8 +555,23 @@ function Update()
 	}
 	else if( gamestate == 'playing' ) {
 		// fade in initially - just keep updating this
-		alpha = Mathf.Clamp( (Time.time-fadeStart) / fadeInTime, 0.0, 1.0 );
+		var inTime = (doFastFade ? fastFadeInTime : fadeInTime);
+		alpha = Mathf.Clamp( (Time.time-fadeStart) / inTime, 0.0, 1.0 );
 		SetFadeAmount( alpha );
+
+		level0Tute.enabled = (currLevId == 0);
+		level1TuteA.enabled = currLevId == 1
+			&& (numReflectionsAllowed-numReflectionsDone > 0)
+			&& !isReflecting;
+		level1TuteB.enabled = currLevId == 1
+			&& isReflecting;
+		level4Tute.enabled = currLevId == 4
+			&& isReflecting;
+
+		if( numReflectionsAllowed > 0 )
+			helpText.text = numReflectionsDone + ' / ' + numReflectionsAllowed;
+		else
+			helpText.text = "";
 
 		if( currLevPoly != null )
 		{
@@ -551,18 +580,18 @@ function Update()
 			if( Input.GetButtonDown('Reset') )
 			{
 				AudioSource.PlayClipAtPoint( restartSnd, hostcam.transform.position );
-				FadeToLevel( currLevId );
+				FadeToLevel( currLevId, true );
 				previewTriRender.gameObject.GetComponent(Renderer).enabled = false;
 
 				if( tracker != null )
 					tracker.PostEvent( "resetLevel", ""+currLevId );
 			}
 			else if( Input.GetButtonDown('NextLevel') ) {
-				FadeToLevel( (currLevId+1)%levels.Count );
+				FadeToLevel( (currLevId+1)%levels.Count, false );
 				previewTriRender.gameObject.GetComponent(Renderer).enabled = false;
 			}
 			else if( Input.GetButtonDown('PrevLevel') ) {
-				FadeToLevel( (levels.Count+currLevId-1)%levels.Count );
+				FadeToLevel( (levels.Count+currLevId-1)%levels.Count, false );
 				previewTriRender.gameObject.GetComponent(Renderer).enabled = false;
 			}
 			else if( isReflecting )
@@ -574,8 +603,6 @@ function Update()
 					mirrorPosIcon.enabled = true;
 					mirrorPosIcon.transform.position = lineStart;
 				}
-
-				helpText.text = 'Q E - Rotate\nClick - Confirm\nSpace - Cancel';
 
 				//----------------------------------------
 				//  Check for rotation input
@@ -665,13 +692,6 @@ function Update()
 				}
 			}
 			else {
-
-				// setup HUD text
-				if( numReflectionsAllowed > 0 ) {
-					helpText.text = 'Click - Reflect';
-					helpText.text += '\n' + numReflectionsDone + ' / ' + numReflectionsAllowed;
-				} else
-					helpText.text = 'W A D - jump, move';
 
 				if( Input.GetButtonDown('ReflectToggle') )
 				{
